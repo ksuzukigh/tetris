@@ -98,5 +98,5 @@ function startGame() {
     createPiece();
     update();
 }
-
 startGame();
+window.onload = startGame;
