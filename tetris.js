@@ -146,3 +146,43 @@ class Piece {
 }
 
 startGame();
+// 新たなピースの生成
+function generatePiece() {
+    const id = Math.floor(Math.random() * pieces.length);
+    const piece = pieces[id];
+
+    currentPiece = {
+        x: Math.floor(columns / 2) - Math.ceil(piece[0].length / 2),
+        y: 0,
+        id: id,
+        shape: piece,
+    };
+}
+
+// ピースの落下速度を調整する
+let dropStart = Date.now();
+let gameOver = false;
+
+function dropPiece() {
+    let now = Date.now();
+    let delta = now - dropStart;
+
+    if (delta > 1000) {
+        currentPiece.y++;
+        dropStart = Date.now();
+    }
+
+    if (!gameOver) {
+        requestAnimationFrame(dropPiece);
+    }
+}
+
+// ゲームの開始
+function startGame() {
+    drawBoard();
+    generatePiece();
+    dropPiece();
+}
+
+// ブラウザ上での描画更新の呼び出し
+window.requestAnimationFrame(startGame);
