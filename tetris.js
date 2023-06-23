@@ -27,7 +27,7 @@ function draw() {
       ctx.fillRect(x, y, 1, 1);
     });
   });
-
+    console.log(currentPiece);
   currentPiece.shape.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
@@ -39,6 +39,7 @@ function draw() {
 }
 
 function mergePiece() {
+    console.log(currentPiece);
   currentPiece.shape.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
@@ -49,6 +50,7 @@ function mergePiece() {
 }
 
 function collision() {
+　console.log(currentPiece);
   for (let y = 0; y < currentPiece.shape.length; y++) {
     for (let x = 0; x < currentPiece.shape[y].length; x++) {
       if (
