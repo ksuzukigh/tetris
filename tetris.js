@@ -50,7 +50,7 @@ function mergePiece() {
 }
 
 function collision() {
-　console.log(currentPiece);
+    console.log(currentPiece);
   for (let y = 0; y < currentPiece.shape.length; y++) {
     for (let x = 0; x < currentPiece.shape[y].length; x++) {
       if (
@@ -66,10 +66,12 @@ function collision() {
 function generatePiece() {
   const pieces = 'ILJOTSZ';
   const piece = pieces[Math.floor(Math.random() * pieces.length)];
+    console.log(currentPiece);
   currentPiece = { x: 3, y: 0, shape: shapes[piece] };
 }
 
 function dropPiece() {
+    console.log(currentPiece);
   currentPiece.y++;
   if (collision()) {
     currentPiece.y--;
@@ -85,10 +87,8 @@ function dropPiece() {
 }
 
 function startGame() {
-  console.log(board);
   generatePiece();
   dropPiece();
 }
 
 startGame();
-
