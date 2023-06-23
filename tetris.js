@@ -1,4 +1,4 @@
-// グローバル変数の定義
+// グローバル変数　の定義
 let canvas, ctx, frames, currentPiece, currentPos;
 let grid = Array.from({length: 20}, () => Array(10).fill(0));
 
