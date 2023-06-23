@@ -19,9 +19,14 @@ function startGame() {
   currentX = Math.floor(gameBoard.clientWidth / 30 / 2);
   currentY = 0;
   drawBlock();
+  // ゲーム開始時にブロックの落下を開始
+  dropBlock();
 }
 
 function drawBlock() {
+  // すでに存在するブロックを削除
+  document.querySelectorAll('.block').forEach(block => block.remove());
+
   currentBlock.shape.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value === 1) {
@@ -34,6 +39,13 @@ function drawBlock() {
       }
     });
   });
+}
+
+function dropBlock() {
+  currentY++;
+  drawBlock();
+  // 1秒ごとにブロックを下に移動
+  setTimeout(dropBlock, 1000);
 }
 
 startGame();
