@@ -91,7 +91,7 @@ window.onkeydown = (e) => {
 };
 
 function startGame() {
-    canvas = document.getElementById('board');
+    canvas = document.getElementById('game-board');
     ctx = canvas.getContext('2d');
     frames = 0;
     resetGrid();
