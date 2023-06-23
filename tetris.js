@@ -83,6 +83,7 @@ function dropPiece() {
 }
 
 function startGame() {
+  console.log(board);
   generatePiece();
   dropPiece();
 }
