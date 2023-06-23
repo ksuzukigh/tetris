@@ -40,7 +40,7 @@ function dropPiece() {
     currentPiece.blocks.forEach((row, y) => {
         row.forEach((value, x) => {
             if (value !== 0) {
-                if (currentPiece.y + y === rows || board[currentPiece.y + y + 1][currentPiece.x + x] !== 0) {
+                if (currentPiece.y + y === rows || game-board[currentPiece.y + y + 1][currentPiece.x + x] !== 0) {
                     collision = true;
                 }
             }
@@ -60,7 +60,7 @@ function placePiece() {
     currentPiece.blocks.forEach((row, y) => {
         row.forEach((value, x) => {
             if (value !== 0) {
-                board[currentPiece.y + y][currentPiece.x + x] = currentPiece.id + 1;
+                game-board[currentPiece.y + y][currentPiece.x + x] = currentPiece.id + 1;
             }
         });
     });
