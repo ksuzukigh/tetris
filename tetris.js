@@ -1,188 +1,90 @@
-const canvas = document.getElementById('game-board');
-const context = canvas.getContext('2d');
-const grid = 20;
-const columns = canvas.width / grid;
-const rows = canvas.height / grid;
-const colors = ['red', 'blue', 'purple', 'green', 'yellow', 'orange', 'cyan'];
+const canvas = document.getElementById("game-board");
+const ctx = canvas.getContext('2d');
 
-let pieces = [
-    [[1]],
-    [[1, 1], [1, 1]],
-    [[1, 1, 0], [0, 1, 1]],
-    [[0, 1, 1], [1, 1]],
-    [[1, 1, 1, 1]],
-    [[1, 1, 1], [0, 0, 1]],
-    [[1, 1, 1], [1]],
-];
+const scale = 20;
+const rows = canvas.height / scale;
+const columns = canvas.width / scale;
 
-let currentPiece, nextPiece;
-let time = {
-    start: 0,
-    elapsed: 0,
-    level: 1000,
-};
+let currentPiece;
+let board = createBoard(rows, columns);
 
-let board = Array.from({ length: rows }, () => Array(columns).fill(0));
-
-function startGame() {
-    currentPiece = new Piece();
-    nextPiece = new Piece();
-    board = Array.from({ length: rows }, () => Array(columns).fill(0));
-    time.start = performance.now();
-    animate();
+function createBoard(rows, columns) {
+  return Array.from({ length: rows }, () => Array(columns).fill(0));
 }
 
-function animate(now = 0) {
-    time.elapsed = now - time.start;
-    if (time.elapsed > time.level) {
-        time.start = now;
-        dropPiece();
+const shapes = {
+  // ...ここに既存の形状の定義が入ります...
+}
+
+const colors = [
+  // ...ここに既存の色の定義が入ります...
+];
+
+function draw() {
+  board.forEach((row, y) => {
+    row.forEach((value, x) => {
+      ctx.fillStyle = colors[value];
+      ctx.fillRect(x, y, 1, 1);
+    });
+  });
+
+  currentPiece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        ctx.fillStyle = colors[value];
+        ctx.fillRect(x + currentPiece.x, y + currentPiece.y, 1, 1);
+      }
+    });
+  });
+}
+
+function mergePiece() {
+  currentPiece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        board[y + currentPiece.y][x + currentPiece.x] = value;
+      }
+    });
+  });
+}
+
+function collision() {
+  for (let y = 0; y < currentPiece.shape.length; y++) {
+    for (let x = 0; x < currentPiece.shape[y].length; x++) {
+      if (
+        currentPiece.shape[y][x] !== 0 &&
+        (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0
+      ) {
+        return true;
+      }
     }
-    drawBoard();
-    drawPiece(currentPiece);
-    requestAnimationFrame(animate);
+  }
+}
+
+function generatePiece() {
+  const pieces = 'ILJOTSZ';
+  const piece = pieces[Math.floor(Math.random() * pieces.length)];
+  currentPiece = { x: 3, y: 0, shape: shapes[piece] };
 }
 
 function dropPiece() {
-    currentPiece.y++;
-    if (collides(board, currentPiece)) {
-        currentPiece.y--;
-        merge(board, currentPiece);
-        currentPiece = nextPiece;
-        nextPiece = new Piece();
+  currentPiece.y++;
+  if (collision()) {
+    currentPiece.y--;
+    mergePiece();
+    generatePiece();
+    if (collision()) {
+      // Game over
+      board = board.map(row => row.fill(0));
     }
+  }
+  draw();
+  setTimeout(dropPiece, 1000);
 }
 
-function rotate(piece) {
-    for (let y = 0; y < piece.shape.length; ++y) {
-        for (let x = 0; x < y; ++x) {
-            [piece.shape[x][y], piece.shape[y][x]] =
-                [piece.shape[y][x], piece.shape[x][y]];
-        }
-    }
-    piece.shape.forEach(row => row.reverse());
-}
-
-document.addEventListener('keydown', event => {
-    if (event.key === 'ArrowUp') dropPiece();
-    if (event.key === ' ') rotate(currentPiece);
-    if (event.key === 'ArrowRight') movePiece(1);
-    if (event.key === 'ArrowLeft') movePiece(-1);
-    if (event.key === 'ArrowDown') time.level = 50;
-});
-
-document.addEventListener('keyup', event => {
-    if (event.key === 'ArrowDown') time.level = 1000;
-});
-
-function collides(board, piece) {
-    for (let y = 0; y < piece.shape.length; y++) {
-        for (let x = 0; x < piece.shape[y].length; x++) {
-            if (
-                piece.shape[y][x] &&
-                (board[y + piece.y] &&
-                    board[y + piece.y][x + piece.x]) !== 0
-            ) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-function merge(board, piece) {
-    for (let y = 0; y < piece.shape.length; y++) {
-        for (let x = 0; x < piece.shape[y].length; x++) {
-            if (piece.shape[y][x]) {
-                board[y + piece.y][x + piece.x] = piece.color;
-            }
-        }
-    }
-}
-
-function movePiece(dir) {
-    currentPiece.x += dir;
-    if (collides(board, currentPiece)) {
-        currentPiece.x -= dir;
-    }
-}
-
-function drawBoard() {
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < columns; x++) {
-            if (board[y][x]) {
-                context.fillStyle = colors[board[y][x]];
-                context.fillRect(x * grid, y * grid, grid, grid);
-            }
-        }
-    }
-}
-
-function drawPiece(piece) {
-    context.fillStyle = colors[piece.color];
-    piece.shape.forEach((row, y) => {
-        row.forEach((value, x) => {
-            if (value > 0) {
-                context.fillRect(
-                    (piece.x + x) * grid,
-                    (piece.y + y) * grid,
-                    grid,
-                    grid,
-                );
-            }
-        });
-    });
-}
-
-class Piece {
-    constructor() {
-        this.color = 'purple';
-        this.shape = [[1, 1, 1, 1]];
-        this.x = 3;
-        this.y = 0;
-    }
+function startGame() {
+  generatePiece();
+  dropPiece();
 }
 
 startGame();
-// 新たなピースの生成
-function generatePiece() {
-    const id = Math.floor(Math.random() * pieces.length);
-    const piece = pieces[id];
-
-    currentPiece = {
-        x: Math.floor(columns / 2) - Math.ceil(piece[0].length / 2),
-        y: 0,
-        id: id,
-        shape: piece,
-    };
-}
-
-// ピースの落下速度を調整する
-let dropStart = Date.now();
-let gameOver = false;
-
-function dropPiece() {
-    let now = Date.now();
-    let delta = now - dropStart;
-
-    if (delta > 1000) {
-        currentPiece.y++;
-        dropStart = Date.now();
-    }
-
-    if (!gameOver) {
-        requestAnimationFrame(dropPiece);
-    }
-}
-
-// ゲームの開始
-function startGame() {
-    drawBoard();
-    generatePiece();
-    dropPiece();
-}
-
-// ブラウザ上での描画更新の呼び出し
-window.requestAnimationFrame(startGame);
