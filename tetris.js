@@ -1,29 +1,32 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('board');
-    const context = canvas.getContext('2d');
+const canvas = document.getElementById('board');
+const context = canvas.getContext('2d');
+context.scale(BLOCK_SIZE, BLOCK_SIZE);
 
-    let piece;
+let dropCounter = 0;
+let dropInterval = 1000;
 
-    function update() {
-        draw(context, board);
-        piece.draw(context);
+let lastTime = 0;
+
+function update(time = 0) {
+    const deltaTime = time - lastTime;
+    lastTime = time;
+
+    dropCounter += deltaTime;
+    if (dropCounter > dropInterval) {
+        piece.pos.y++;
+        dropCounter = 0;
     }
 
-    function draw(context, board) {
-        for(let y = 0; y < BOARD_HEIGHT; y++) {
-            for(let x = 0; x < BOARD_WIDTH; x++) {
-                if(board[y][x] !== 0) {
-                    drawBlock(context, x, y, COLORS[board[y][x]]);
-                }
-            }
-        }
-    }
+    context.clearRect(0, 0, canvas.width, canvas.height);
 
-    function startGame() {
-        board = createBoard(BOARD_WIDTH, BOARD_HEIGHT);
-        piece = getRandomPiece();
-        update();
-    }
+    piece.draw(context);
 
-    startGame();
-});
+    requestAnimationFrame(update);
+}
+
+const piece = getRandomPiece();
+
+piece.pos.y = 0;
+piece.pos.x = (BOARD_WIDTH / 2) | 0;
+
+update();
