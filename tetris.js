@@ -1,32 +1,33 @@
-let board = createBoard(rows, columns);
-let currentPiece = null;
+let dropCounter = 0;
+let dropInterval = 1000;
+let lastTime = 0;
 
-function draw() {
-  // Draw game board
-  board.forEach((row, y) => {
-    row.forEach((value, x) => {
-      ctx.fillStyle = colors[value];
-      ctx.fillRect(x, y, 1, 1);
-    });
-  });
+function update(time = 0) {
+  const deltaTime = time - lastTime;
+  lastTime = time;
 
-  // Draw current piece
-  if (currentPiece) {
-    currentPiece.shape.forEach((row, y) => {
-      row.forEach((value, x) => {
-        if (value !== 0) {
-          ctx.fillStyle = colors[value];
-          ctx.fillRect(x + currentPiece.x, y + currentPiece.y, 1, 1);
-        }
-      });
-    });
+  dropCounter += deltaTime;
+  if (dropCounter > dropInterval) {
+    dropPiece();
+  }
+
+  draw();
+  requestAnimationFrame(update);
+}
+
+function dropPiece() {
+  currentPiece.pos.y++;
+  if (collide(board, currentPiece)) {
+    currentPiece.pos.y--;
+    merge(board, currentPiece);
+    startGame();
   }
 }
 
 function startGame() {
-    console.log('startGame function is being called');
-  currentPiece = createPiece();
-  draw();
+  currentPiece = getRandomPiece();
+  dropInterval = 1000;
 }
 
 startGame();
+update();
