@@ -1,24 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Tetris Game</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris</title>
     <style>
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #000;
+            background: #000;
+            margin: 0;
         }
 
-        canvas {
+        #board {
             border: 1px solid #fff;
         }
     </style>
 </head>
+
 <body>
-    <canvas id="game-board" width="200" height="400"></canvas>
+    <canvas id="board" width="300" height="600"></canvas>
     <script src="tetris-utils.js"></script>
     <script src="tetris.js"></script>
 </body>
+
 </html>
