@@ -1,33 +1,20 @@
-let dropCounter = 0;
-let dropInterval = 1000;
-let lastTime = 0;
+const canvas = document.getElementById("board");
+const context = canvas.getContext("2d");
 
-function update(time = 0) {
-  const deltaTime = time - lastTime;
-  lastTime = time;
+const board = createBoard(10, 20);
+let piece = getRandomPiece();
 
-  dropCounter += deltaTime;
-  if (dropCounter > dropInterval) {
-    dropPiece();
-  }
-
-  draw();
-  requestAnimationFrame(update);
+function update() {
+    dropPiece(piece, board);
+    draw(board, context);
+    setTimeout(update, 1000);
 }
 
-function dropPiece() {
-  currentPiece.pos.y++;
-  if (collide(board, currentPiece)) {
-    currentPiece.pos.y--;
-    merge(board, currentPiece);
-    startGame();
-  }
+function startGame(board, piece) {
+    board.forEach(row => row.fill(0));
+    piece = getRandomPiece();
+    dropPiece(piece, board);
 }
 
-function startGame() {
-  currentPiece = getRandomPiece();
-  dropInterval = 1000;
-}
-
-startGame();
+startGame(board, piece);
 update();
