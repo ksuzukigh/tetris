@@ -1,7 +1,3 @@
-// 全ての固定値やピースの定義、さらにPieceクラスとcreateBoard、
-// drawBlock、getRandomPiece関数をtetris-utils.jsに配置します。
-
-
 const canvas = document.getElementById("game-board");
 const ctx = canvas.getContext('2d');
 
@@ -9,7 +5,6 @@ const scale = 40;
 
 const rows = canvas.height / scale;
 const columns = canvas.width / scale;
-
 
 const shapes = {
   I: [
@@ -55,11 +50,9 @@ const colors = [
   'red'      // Z
 ];
 
-
 function createBoard(rows, columns) {
   return Array.from({ length: rows }, () => Array(columns).fill(0));
 }
-
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -110,20 +103,23 @@ function dropPiece() {
     }
   }
   draw();
-  setTimeout(dropPiece, 1000);
 }
-function controlPiece(e) {
-  if (e.keyCode === 37) { // Left Arrow Key
-    currentPiece.x--;
-    if (collision()) currentPiece.x++;
-  } else if (e.keyCode === 39) { // Right Arrow Key
-    currentPiece.x++;
-    if (collision()) currentPiece.x--;
-  } else if (e.keyCode === 40) { // Down Arrow Key
-    dropPiece();
+
+function movePiece(dir) {
+  currentPiece.x += dir;
+  if (collision()) {
+    currentPiece.x -= dir;
   }
 }
 
-document.addEventListener('keydown', controlPiece);
+document.addEventListener('keydown', event => {
+  if (event.key === 'ArrowLeft') {
+    movePiece(-1);
+  } else if (event.key === 'ArrowRight') {
+    movePiece(1);
+  } else if (event.key === 'ArrowDown') {
+    dropPiece();
+  }
+});
 
-
+setTimeout(dropPiece, 1000);
