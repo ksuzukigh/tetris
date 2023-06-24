@@ -1,56 +1,8 @@
-const canvas = document.getElementById("game-board");
-const ctx = canvas.getContext('2d');
-
-const scale = 20;
-const rows = canvas.height / scale;
-const columns = canvas.width / scale;
-
-let currentPiece;
-let board = createBoard(rows, columns);
-
-function createBoard(rows, columns) {
-  return Array.from({ length: rows }, () => Array(columns).fill(0));
-}
-
-const shapes = {
-  I: [
-    [0, 1, 0, 0],
-    [0, 1, 0, 0],
-    [0, 1, 0, 0],
-    [0, 1, 0, 0]
-  ],
-  J: [
-    [0, 2, 0],
-    [0, 2, 0],
-    [2, 2, 0]
-  ],
-  L: [
-    [0, 3, 0],
-    [0, 3, 0],
-    [0, 3, 3]
-  ],
-  O: [
-    [4, 4],
-    [4, 4]
-  ],
-  S: [
-    [0, 5, 5],
-    [5, 5, 0],
-    [0, 0, 0]
-  ],
-  Z: [
-    [6, 6, 0],
-    [0, 6, 6],
-    [0, 0, 0]
-  ],
-  T: [
-    [7, 7, 7],
-    [0, 7, 0],
-    [0, 0, 0]
-  ]
-};
-
-const colors = [
+const COLS = 10;
+const ROWS = 20;
+const BLOCK_SIZE = 30;
+const LINES_PER_LEVEL = 10;
+const COLORS = [
   'none',
   'cyan',
   'blue',
@@ -60,18 +12,52 @@ const colors = [
   'purple',
   'red'
 ];
+const SHAPES = [
+  [],
+  [[1, 1, 1, 1]], // I
+  [[0, 2, 2],     // O
+   [2, 2]],
+  [[3, 3, 0],     // T
+   [0, 3, 0]],
+  [[4, 0, 0],     // L
+   [4, 4, 4]],
+  [[0, 0, 5],     // J
+   [5, 5, 5]],
+  [[6, 6, 0],     // S
+   [0, 6, 6]],
+  [[0, 7, 7],     // Z
+   [7, 7]]
+];
 
-function collide(board, piece) {
-  for (let y = 0; y < piece.shape.length; y++) {
-    for (let x = 0; x < piece.shape[y].length; x++) {
-      if (piece.shape[y][x] !== 0 &&
-        (board[y + piece.pos.y] &&
-        board[y + piece.pos.y][x + piece.pos.x]) !== 0) {
+// Piece class
+class Piece {
+  x;
+  y;
+  color;
+  shape;
+
+  constructor(shape) {
+    this.x = 0;
+    this.y = 0;
+    this.color = COLORS[shape[0][0]];
+    this.shape = shape;
+  }
+}
+
+function createBoard(cols, rows) {
+  return Array.from({ length: rows }, () => Array(cols).fill(0));
+}
+
+function collides(board, piece) {
+  for (let y = 0; y < piece.shape.length; ++y) {
+    for (let x = 0; x < piece.shape[y].length; ++x) {
+      if (piece.shape[y][x] &&
+        (board[y + piece.y] &&
+          board[y + piece.y][x + piece.x]) !== 0) {
         return true;
       }
     }
   }
-
   return false;
 }
 
@@ -79,69 +65,31 @@ function merge(board, piece) {
   piece.shape.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
-        board[y + piece.pos.y][x + piece.pos.x] = value;
+        board[y + piece.y][x + piece.x] = value;
       }
     });
   });
 }
 
-function draw() {
-  board.forEach((row, y) => {
-    row.forEach((value, x) => {
-      ctx.fillStyle = colors[value];
-      ctx.fillRect(x, y, 1, 1);
-    });
-  });
-
-  if (currentPiece) {
-    currentPiece.shape.forEach((row, y) => {
-      row.forEach((value, x) => {
-        if (value !== 0) {
-          ctx.fillStyle = colors[value];
-          ctx.fillRect(x + currentPiece.pos.x, y + currentPiece.pos.y, 1, 1);
-        }
-      });
-    });
+function rotate(piece) {
+  let p = JSON.parse(JSON.stringify(piece));
+  // Transpose matrix
+  for (let y = 0; y < p.shape.length; ++y) {
+    for (let x = 0; x < y; ++x) {
+      [p.shape[x][y], p.shape[y][x]] = [p.shape[y][x], p.shape[x][y]];
+    }
   }
-}
-
-function resetBoard() {
-  board = getEmptyBoard();
-  dropCounter = 0;
-  dropInterval = 1000;
-  lastDropTime = 0;
-  gameOver = false;
+  // Reverse the order of the columns.
+  p.shape.forEach(row => row.reverse());
+  return p;
 }
 
 function getRandomPiece() {
-  const pieces = 'ILJOTSZ';
-  return createPiece(pieces[pieces.length * Math.random() | 0]);
+  let index = Math.floor(Math.random() * 7) + 1;
+  let shape = SHAPES[index];
+  return createPiece(shape);
 }
 
-function getEmptyBoard() {
-  return Array.from({length: ROWS}, () => Array(COLUMNS).fill(0));
-}
-
-function createPiece(type) {
-  if (type === 'I') {
-    return new Piece(SHAPES_I, 'cyan');
-  } else if (type === 'J') {
-    return new Piece(SHAPES_J, 'blue');
-  } else if (type === 'L') {
-    return new Piece(SHAPES_L, 'orange');
-  } else if (type === 'O') {
-    return new Piece(SHAPES_O, 'yellow');
-  } else if (type === 'S') {
-    return new Piece(SHAPES_S, 'green');
-  } else if (type === 'T') {
-    return new Piece(SHAPES_T, 'purple');
-  } else if (type === 'Z') {
-    return new Piece(SHAPES_Z, 'red');
-  }
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBoard();
-  drawPiece();
+function createPiece(shape) {
+  return new Piece(shape);
 }
