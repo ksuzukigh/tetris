@@ -1,7 +1,7 @@
 const canvas = document.getElementById("game-board");
 const ctx = canvas.getContext('2d');
 
-const scale = 10;
+const scale = 20;
 const rows = canvas.height / scale;
 const columns = canvas.width / scale;
 
@@ -17,11 +17,11 @@ const shapes = {
     [1, 1, 1, 1],
   ],
   L: [
-    [0, 0, 1],
+    [0, 1],
     [1, 1, 1],
   ],
   J: [
-    [1, 0, 0],
+    [1, 0],
     [1, 1, 1],
   ],
   O: [
@@ -53,6 +53,10 @@ function draw() {
     row.forEach((value, x) => {
       ctx.fillStyle = colors[value];
       ctx.fillRect(x * scale, y * scale, scale, scale);
+      
+      // Draw grid
+      ctx.strokeStyle = '#ddd';
+      ctx.strokeRect(x * scale, y * scale, scale, scale);
     });
   });
 
@@ -89,6 +93,7 @@ function collision() {
       }
     }
   }
+  return false;
 }
 
 function generatePiece() {
@@ -109,7 +114,7 @@ function dropPiece() {
     }
   }
   draw();
-  setTimeout(dropPiece, 2000);
+  setTimeout(dropPiece, 1000);
 }
 
 function startGame() {
