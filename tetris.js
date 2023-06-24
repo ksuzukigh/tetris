@@ -93,6 +93,7 @@ function dropPiece() {
 }
 
 function startGame() {
+  console.log("startGame function is called"); 
   generatePiece();
   dropPiece();
 }
