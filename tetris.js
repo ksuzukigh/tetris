@@ -17,36 +17,42 @@ const shapes = {
     [1, 1, 1, 1],
   ],
   L: [
-    [0, 1],
-    [0, 1],
-    [1, 1],
+    [0, 2],
+    [0, 2],
+    [2, 2],
   ],
   J: [
-    [1, 0],
-    [1, 0],
-    [1, 1],
+    [3, 0],
+    [3, 0],
+    [3, 3],
   ],
   O: [
-    [1, 1],
-    [1, 1],
+    [4, 4],
+    [4, 4],
   ],
   T: [
-    [0, 1, 0],
-    [1, 1, 1],
+    [0, 5, 0],
+    [5, 5, 5],
   ],
   S: [
-    [0, 1, 1],
-    [1, 1, 0],
+    [0, 6, 6],
+    [6, 6, 0],
   ],
   Z: [
-    [1, 1, 0],
-    [0, 1, 1],
+    [7, 7, 0],
+    [0, 7, 7],
   ]
 };
 
 const colors = [
   null,
-  'red',
+  'cyan',    // I
+  'blue',    // J
+  'orange',  // L
+  'yellow',  // O
+  'purple',  // T
+  'green',   // S
+  'red'      // Z
 ];
 
 function draw() {
@@ -55,10 +61,15 @@ function draw() {
   // Draw the game board
   board.forEach((row, y) => {
     row.forEach((value, x) => {
+      // Fill in the cell if it is not empty
       if (value !== 0) {
         ctx.fillStyle = colors[value];
         ctx.fillRect(x * scale, y * scale, scale, scale);
       }
+
+      // Draw grid lines
+      ctx.strokeStyle = '#DDD';
+      ctx.strokeRect(x * scale, y * scale, scale, scale);
     });
   });
 
@@ -102,7 +113,7 @@ function collision() {
 function generatePiece() {
   const pieces = 'ILJOTSZ';
   const piece = pieces[Math.floor(Math.random() * pieces.length)];
-  currentPiece = { x: 3, y: 0, shape: shapes[piece] };
+  currentPiece = { x: 5, y: 0, shape: shapes[piece] };
 }
 
 function dropPiece() {
