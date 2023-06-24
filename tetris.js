@@ -1,7 +1,7 @@
 const canvas = document.getElementById("game-board");
 const ctx = canvas.getContext('2d');
 
-const scale = 40;  // scaleを40に変更
+const scale = 20;
 const rows = canvas.height / scale;
 const columns = canvas.width / scale;
 
@@ -13,76 +13,39 @@ function createBoard(rows, columns) {
 }
 
 const shapes = {
-  I: [
-    [0, 1, 0, 0],
-    [0, 1, 0, 0],
-    [0, 1, 0, 0],
-    [0, 1, 0, 0],
-  ],
-  L: [
-    [0, 2, 0],
-    [0, 2, 0],
-    [0, 2, 2],
-  ],
-  J: [
-    [0, 3, 0],
-    [0, 3, 0],
-    [3, 3, 0],
-  ],
-  O: [
-    [4, 4],
-    [4, 4],
-  ],
-  T: [
-    [0, 5, 0],
-    [5, 5, 5],
-    [0, 0, 0],
-  ],
-  S: [
-    [0, 6, 6],
-    [6, 6, 0],
-    [0, 0, 0],
-  ],
-  Z: [
-    [7, 7, 0],
-    [0, 7, 7],
-    [0, 0, 0],
-  ],
+  I: [[1, 1, 1, 1]],
+  L: [[0, 0, 1], [1, 1, 1]],
+  J: [[1, 0, 0], [1, 1, 1]],
+  O: [[1, 1], [1, 1]],
+  T: [[0, 1, 0], [1, 1, 1]],
+  S: [[0, 1, 1], [1, 1, 0]],
+  Z: [[1, 1, 0], [0, 1, 1]]
 };
 
 const colors = [
   null,
-  'cyan',
-  'blue',
-  'orange',
-  'yellow',
-  'purple',
-  'green',
-  'red'
+  'black'
 ];
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
   board.forEach((row, y) => {
     row.forEach((value, x) => {
       ctx.fillStyle = colors[value];
-      ctx.fillRect(x * scale, y * scale, scale, scale);  // パラメータを scale で調整
-      ctx.strokeStyle = 'black';
-      ctx.strokeRect(x * scale, y * scale, scale, scale);  // パラメータを scale で調整
+      ctx.fillRect(x * scale, y * scale, scale, scale);
     });
   });
 
-  currentPiece.shape.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        ctx.fillStyle = colors[value];
-        ctx.fillRect((x + currentPiece.x) * scale, (y + currentPiece.y) * scale, scale, scale);  // パラメータを scale で調整
-        ctx.strokeStyle = 'black';
-        ctx.strokeRect((x + currentPiece.x) * scale, (y + currentPiece.y) * scale, scale, scale);  // パラメータを scale で調整
-      }
+  if (currentPiece) {
+    currentPiece.shape.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (value !== 0) {
+          ctx.fillStyle = colors[value];
+          ctx.fillRect((x + currentPiece.x) * scale, (y + currentPiece.y) * scale, scale, scale);
+        }
+      });
     });
-  });
+  }
 }
 
 function mergePiece() {
@@ -106,13 +69,12 @@ function collision() {
       }
     }
   }
-  return false;
 }
 
 function generatePiece() {
   const pieces = 'ILJOTSZ';
   const piece = pieces[Math.floor(Math.random() * pieces.length)];
-  currentPiece = { x: 3, y: 0, shape: shapes[piece] };
+  currentPiece = { x: 5, y: 0, shape: shapes[piece] };
 }
 
 function dropPiece() {
