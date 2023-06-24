@@ -1,118 +1,116 @@
-// Block types
-const I = [
-    [
-        [1, 1, 1, 1],
-    ],
+// 全ての固定値やピースの定義、さらにPieceクラスとcreateBoard、
+// drawBlock、getRandomPiece関数をtetris-utils.jsに配置します。
+
+
+const canvas = document.getElementById("game-board");
+const ctx = canvas.getContext('2d');
+
+const scale = 40;
+
+const rows = canvas.height / scale;
+const columns = canvas.width / scale;
+
+
+const shapes = {
+  I: [
+    [1, 1, 1, 1],
+  ],
+  L: [
+    [0, 2],
+    [0, 2],
+    [2, 2],
+  ],
+  J: [
+    [3, 0],
+    [3, 0],
+    [3, 3],
+  ],
+  O: [
+    [4, 4],
+    [4, 4],
+  ],
+  T: [
+    [0, 5, 0],
+    [5, 5, 5],
+  ],
+  S: [
+    [0, 6, 6],
+    [6, 6, 0],
+  ],
+  Z: [
+    [7, 7, 0],
+    [0, 7, 7],
+  ]
+};
+
+
+const colors = [
+  null,
+  'cyan',    // I
+  'blue',    // J
+  'orange',  // L
+  'yellow',  // O
+  'purple',  // T
+  'green',   // S
+  'red'      // Z
 ];
 
-const O = [
-    [
-        [2, 2],
-        [2, 2],
-    ],
-];
 
-const T = [
-    [
-        [0, 3, 0],
-        [3, 3, 3],
-    ],
-];
+function createBoard(rows, columns) {
+  return Array.from({ length: rows }, () => Array(columns).fill(0));
+}
 
-const S = [
-    [
-        [0, 4, 4],
-        [4, 4, 0],
-    ],
-];
 
-const Z = [
-    [
-        [5, 5, 0],
-        [0, 5, 5],
-    ],
-];
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-const L = [
-    [
-        [6, 0],
-        [6, 0],
-        [6, 6],
-    ],
-];
+  // Draw the game board
+  board.forEach((row, y) => {
+    row.forEach((value, x) => {
+      // Fill in the cell if it is not empty
+      if (value !== 0) {
+        ctx.fillStyle = colors[value];
+        ctx.fillRect(x * scale, y * scale, scale, scale);
+      }
 
-const J = [
-    [
-        [0, 7],
-        [0, 7],
-        [7, 7],
-    ],
-];
+      // Draw grid lines
+      ctx.strokeStyle = '#DDD';
+      ctx.strokeRect(x * scale, y * scale, scale, scale);
+    });
+  });
 
-const COLORS = [
-    null,
-    'cyan',
-    'yellow',
-    'purple',
-    'green',
-    'red',
-    'blue',
-    'orange',
-];
-
-const BOARD_WIDTH = 10;
-const BOARD_HEIGHT = 20;
-const BLOCK_SIZE = 30;
-const BOARD_COLOR = '#000';
-const BLOCK_COLOR = '#f00';
-const LINES_COLOR = '#888';
-
-let board = createBoard(BOARD_WIDTH, BOARD_HEIGHT);
-
-function createBoard(width, height) {
-    let board = [];
-    for(let y = 0; y < height; y++) {
-        board[y] = [];
-        for(let x = 0; x < width; x++) {
-            board[y][x] = 0;
+  // Draw the current piece
+  if (currentPiece) {
+    currentPiece.shape.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (value !== 0) {
+          ctx.fillStyle = colors[value];
+          ctx.fillRect((x + currentPiece.x) * scale, (y + currentPiece.y) * scale, scale, scale);
         }
+      });
+    });
+  }
+}
+
+function generatePiece() {
+  const pieces = 'ILJOTSZ';
+  const piece = pieces[Math.floor(Math.random() * pieces.length)];
+  currentPiece = { x: 5, y: 0, shape: shapes[piece] };
+}
+
+function dropPiece() {
+  currentPiece.y++;
+  if (collision()) {
+    currentPiece.y--;
+    mergePiece();
+    generatePiece();
+    if (collision()) {
+      // Game over
+      board = createBoard(rows, columns);
     }
-    return board;
+  }
+  draw();
+  setTimeout(dropPiece, 1000);
 }
 
-function drawBlock(context, x, y, color) {
-    context.fillStyle = color;
-    context.fillRect(x*BLOCK_SIZE, y*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-    context.strokeStyle = LINES_COLOR;
-    context.strokeRect(x*BLOCK_SIZE, y*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-}
 
-// Pieces 
-const pieces = [I, J, L, O, S, T, Z];
-
-function createPiece(type)
-{
-    if (type === 'T') {
-        return T;
-    } else if (type === 'O') {
-        return O;
-    } else if (type === 'L') {
-        return L;
-    } else if (type === 'J') {
-        return J;
-    } else if (type === 'I') {
-        return I;
-    } else if (type === 'S') {
-        return S;
-    } else if (type === 'Z') {
-        return Z;
-    }
-}
-
-function getRandomPiece() {
-    const typeId = Math.floor(Math.random() * pieces.length); // 0 ~ 6
-    const type = pieces[typeId];
-    const piece = { typeId: typeId, rotationId: 0, x: 0, y: 0, blocks: createPiece(type) };
-
-    return piece;
-}
