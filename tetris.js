@@ -1,4 +1,4 @@
-const canvas = document.getElementById("game-board");
+const canvas = document.getElementById('game-board');
 const ctx = canvas.getContext('2d');
 
 const scale = 20;
@@ -13,22 +13,57 @@ function createBoard(rows, columns) {
 }
 
 const shapes = {
-  I: [[1, 1, 1, 1]],
-  L: [[0, 0, 1], [1, 1, 1]],
-  J: [[1, 0, 0], [1, 1, 1]],
-  O: [[1, 1], [1, 1]],
-  T: [[0, 1, 0], [1, 1, 1]],
-  S: [[0, 1, 1], [1, 1, 0]],
-  Z: [[1, 1, 0], [0, 1, 1]]
+  I: [
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 0, 0]
+  ],
+  J: [
+    [1, 0, 0],
+    [1, 1, 1],
+    [0, 0, 0]
+  ],
+  L: [
+    [0, 0, 1],
+    [1, 1, 1],
+    [0, 0, 0]
+  ],
+  O: [
+    [1, 1],
+    [1, 1]
+  ],
+  S: [
+    [0, 1, 1],
+    [1, 1, 0],
+    [0, 0, 0]
+  ],
+  T: [
+    [0, 1, 0],
+    [1, 1, 1],
+    [0, 0, 0]
+  ],
+  Z: [
+    [1, 1, 0],
+    [0, 1, 1],
+    [0, 0, 0]
+  ]
 };
 
 const colors = [
   null,
-  'black'
+  'red',
+  'blue',
+  'yellow',
+  'green',
+  'purple',
+  'cyan',
+  'orange',
 ];
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   board.forEach((row, y) => {
     row.forEach((value, x) => {
       ctx.fillStyle = colors[value];
@@ -36,16 +71,14 @@ function draw() {
     });
   });
 
-  if (currentPiece) {
-    currentPiece.shape.forEach((row, y) => {
-      row.forEach((value, x) => {
-        if (value !== 0) {
-          ctx.fillStyle = colors[value];
-          ctx.fillRect((x + currentPiece.x) * scale, (y + currentPiece.y) * scale, scale, scale);
-        }
-      });
+  currentPiece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        ctx.fillStyle = colors[value];
+        ctx.fillRect((x + currentPiece.x) * scale, (y + currentPiece.y) * scale, scale, scale);
+      }
     });
-  }
+  });
 }
 
 function mergePiece() {
@@ -61,10 +94,8 @@ function mergePiece() {
 function collision() {
   for (let y = 0; y < currentPiece.shape.length; y++) {
     for (let x = 0; x < currentPiece.shape[y].length; x++) {
-      if (
-        currentPiece.shape[y][x] !== 0 &&
-        (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0
-      ) {
+      if (currentPiece.shape[y][x] !== 0 &&
+          (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0) {
         return true;
       }
     }
@@ -72,14 +103,12 @@ function collision() {
 }
 
 function generatePiece() {
-  console.log("generatePiece function is called");
-  const pieces = 'ILJOTSZ';
+  const pieces = 'IJLOSTZ';
   const piece = pieces[Math.floor(Math.random() * pieces.length)];
-  currentPiece = { x: 5, y: 0, shape: shapes[piece] };
+  currentPiece = { x: 3, y: 0, shape: shapes[piece] };
 }
 
 function dropPiece() {
-  console.log("dropPiece function is called");
   currentPiece.y++;
   if (collision()) {
     currentPiece.y--;
@@ -95,7 +124,6 @@ function dropPiece() {
 }
 
 function startGame() {
-  console.log("startGame function is called"); 
   generatePiece();
   dropPiece();
 }
