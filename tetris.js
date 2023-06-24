@@ -24,6 +24,7 @@ function draw() {
 }
 
 function startGame() {
+    console.log('startGame function is being called');
   currentPiece = createPiece();
   draw();
 }
