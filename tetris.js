@@ -1,7 +1,7 @@
 const canvas = document.getElementById("game-board");
 const ctx = canvas.getContext('2d');
 
-const scale = 20;
+const scale = 40;  // scaleを40に変更
 const rows = canvas.height / scale;
 const columns = canvas.width / scale;
 
@@ -47,18 +47,18 @@ const shapes = {
     [7, 7, 0],
     [0, 7, 7],
     [0, 0, 0],
-  ]
+  ],
 };
 
 const colors = [
   null,
-  'red',
+  'cyan',
   'blue',
   'orange',
   'yellow',
-  'green',
   'purple',
-  'cyan'
+  'green',
+  'red'
 ];
 
 function draw() {
@@ -67,9 +67,9 @@ function draw() {
   board.forEach((row, y) => {
     row.forEach((value, x) => {
       ctx.fillStyle = colors[value];
-      ctx.fillRect(x, y, 1, 1);
+      ctx.fillRect(x * scale, y * scale, scale, scale);  // パラメータを scale で調整
       ctx.strokeStyle = 'black';
-      ctx.strokeRect(x, y, 1, 1);
+      ctx.strokeRect(x * scale, y * scale, scale, scale);  // パラメータを scale で調整
     });
   });
 
@@ -77,9 +77,9 @@ function draw() {
     row.forEach((value, x) => {
       if (value !== 0) {
         ctx.fillStyle = colors[value];
-        ctx.fillRect(x + currentPiece.x, y + currentPiece.y, 1, 1);
+        ctx.fillRect((x + currentPiece.x) * scale, (y + currentPiece.y) * scale, scale, scale);  // パラメータを scale で調整
         ctx.strokeStyle = 'black';
-        ctx.strokeRect(x + currentPiece.x, y + currentPiece.y, 1, 1);
+        ctx.strokeRect((x + currentPiece.x) * scale, (y + currentPiece.y) * scale, scale, scale);  // パラメータを scale で調整
       }
     });
   });
