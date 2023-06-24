@@ -1,116 +1,118 @@
+// Block types
 const I = [
-    [1, 1, 1, 1]
-];
-
-const J = [
-    [1, 0, 0],
-    [1, 1, 1]
-];
-
-const L = [
-    [0, 0, 1],
-    [1, 1, 1]
+    [
+        [1, 1, 1, 1],
+    ],
 ];
 
 const O = [
-    [1, 1],
-    [1, 1]
-];
-
-const S = [
-    [0, 1, 1],
-    [1, 1, 0]
+    [
+        [2, 2],
+        [2, 2],
+    ],
 ];
 
 const T = [
-    [0, 1, 0],
-    [1, 1, 1]
+    [
+        [0, 3, 0],
+        [3, 3, 3],
+    ],
+];
+
+const S = [
+    [
+        [0, 4, 4],
+        [4, 4, 0],
+    ],
 ];
 
 const Z = [
-    [1, 1, 0],
-    [0, 1, 1]
+    [
+        [5, 5, 0],
+        [0, 5, 5],
+    ],
 ];
 
-function createPiece(type) {
-    switch (type) {
-        case 'I':
-            return I;
-        case 'J':
-            return J;
-        case 'L':
-            return L;
-        case 'O':
-            return O;
-        case 'S':
-            return S;
-        case 'T':
-            return T;
-        case 'Z':
-            return Z;
-    }
-}
+const L = [
+    [
+        [6, 0],
+        [6, 0],
+        [6, 6],
+    ],
+];
 
-function drawPiece(piece, offset) {
-    piece.forEach((row, y) => {
-        row.forEach((value, x) => {
-            if (value !== 0) {
-                context.fillStyle = COLORS[value];
-                context.fillRect(x + offset.x,
-                    y + offset.y,
-                    1, 1);
-            }
-        });
-    });
-}
+const J = [
+    [
+        [0, 7],
+        [0, 7],
+        [7, 7],
+    ],
+];
 
-function draw() {
-    context.fillStyle = '#000';
-    context.fillRect(0, 0, canvas.width, canvas.height);
+const COLORS = [
+    null,
+    'cyan',
+    'yellow',
+    'purple',
+    'green',
+    'red',
+    'blue',
+    'orange',
+];
 
-    drawPiece(player.matrix, player.pos);
-}
+const BOARD_WIDTH = 10;
+const BOARD_HEIGHT = 20;
+const BLOCK_SIZE = 30;
+const BOARD_COLOR = '#000';
+const BLOCK_COLOR = '#f00';
+const LINES_COLOR = '#888';
 
-function merge(arena, player) {
-    player.matrix.forEach((row, y) => {
-        row.forEach((value, x) => {
-            if (value !== 0) {
-                arena[y + player.pos.y][x + player.pos.x] = value;
-            }
-        });
-    });
-}
+let board = createBoard(BOARD_WIDTH, BOARD_HEIGHT);
 
-function collide(arena, player) {
-    const [m, o] = [player.matrix, player.pos];
-    for (let y = 0; y < m.length; ++y) {
-        for (let x = 0; x < m[y].length; ++x) {
-            if (m[y][x] !== 0 &&
-                (arena[y + o.y] &&
-                    arena[y + o.y][x + o.x]) !== 0) {
-                return true;
-            }
+function createBoard(width, height) {
+    let board = [];
+    for(let y = 0; y < height; y++) {
+        board[y] = [];
+        for(let x = 0; x < width; x++) {
+            board[y][x] = 0;
         }
     }
-    return false;
+    return board;
 }
 
-function rotate(matrix, dir) {
-    for (let y = 0; y < matrix.length; ++y) {
-        for (let x = 0; x < y; ++x) {
-            [
-                matrix[x][y],
-                matrix[y][x],
-            ] = [
-                matrix[y][x],
-                matrix[x][y],
-            ];
-        }
-    }
+function drawBlock(context, x, y, color) {
+    context.fillStyle = color;
+    context.fillRect(x*BLOCK_SIZE, y*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+    context.strokeStyle = LINES_COLOR;
+    context.strokeRect(x*BLOCK_SIZE, y*BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+}
 
-    if (dir > 0) {
-        matrix.forEach(row => row.reverse());
-    } else {
-        matrix.reverse();
+// Pieces 
+const pieces = [I, J, L, O, S, T, Z];
+
+function createPiece(type)
+{
+    if (type === 'T') {
+        return T;
+    } else if (type === 'O') {
+        return O;
+    } else if (type === 'L') {
+        return L;
+    } else if (type === 'J') {
+        return J;
+    } else if (type === 'I') {
+        return I;
+    } else if (type === 'S') {
+        return S;
+    } else if (type === 'Z') {
+        return Z;
     }
+}
+
+function getRandomPiece() {
+    const typeId = Math.floor(Math.random() * pieces.length); // 0 ~ 6
+    const type = pieces[typeId];
+    const piece = { typeId: typeId, rotationId: 0, x: 0, y: 0, blocks: createPiece(type) };
+
+    return piece;
 }
