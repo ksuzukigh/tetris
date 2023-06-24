@@ -112,5 +112,18 @@ function dropPiece() {
   draw();
   setTimeout(dropPiece, 1000);
 }
+function controlPiece(e) {
+  if (e.keyCode === 37) { // Left Arrow Key
+    currentPiece.x--;
+    if (collision()) currentPiece.x++;
+  } else if (e.keyCode === 39) { // Right Arrow Key
+    currentPiece.x++;
+    if (collision()) currentPiece.x--;
+  } else if (e.keyCode === 40) { // Down Arrow Key
+    dropPiece();
+  }
+}
+
+document.addEventListener('keydown', controlPiece);
 
 
