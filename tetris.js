@@ -72,12 +72,14 @@ function collision() {
 }
 
 function generatePiece() {
+  console.log("generatePiece function is called");
   const pieces = 'ILJOTSZ';
   const piece = pieces[Math.floor(Math.random() * pieces.length)];
   currentPiece = { x: 5, y: 0, shape: shapes[piece] };
 }
 
 function dropPiece() {
+  console.log("dropPiece function is called");
   currentPiece.y++;
   if (collision()) {
     currentPiece.y--;
