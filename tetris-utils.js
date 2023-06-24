@@ -38,6 +38,7 @@ const shapes = {
   ]
 };
 
+
 const colors = [
   null,
   'cyan',    // I
@@ -90,9 +91,20 @@ function generatePiece() {
   currentPiece = { x: 5, y: 0, shape: shapes[piece] };
 }
 
-function dropPiece() {
-  currentPiece.y++;
+function movePiece(dir, y = 0) {
+  currentPiece.x += dir;
+  currentPiece.y += y;
   if (collision()) {
+    currentPiece.x -= dir;
+    currentPiece.y -= y;
+  }
+}
+
+function dropPiece(toBottom = false) {
+  if (toBottom) {
+    while (!collision()) {
+      currentPiece.y++;
+    }
     currentPiece.y--;
     mergePiece();
     generatePiece();
@@ -100,7 +112,41 @@ function dropPiece() {
       // Game over
       board = createBoard(rows, columns);
     }
+  } else {
+    currentPiece.y++;
+    if (collision()) {
+      currentPiece.y--;
+      mergePiece();
+      generatePiece();
+      if (collision()) {
+        // Game over
+        board = createBoard(rows, columns);
+      }
+    }
   }
   draw();
-  setTimeout(dropPiece, 1000);
 }
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'ArrowUp') {
+    // Rotate piece clockwise
+    // TO-DO: Implement piece rotation
+  } else if (event.key === 'ArrowRight') {
+    movePiece(1);
+  } else if (event.key === 'ArrowDown') {
+    // Note: This will only move the piece one cell down
+    movePiece(0, 1);
+  } else if (event.key === 'ArrowLeft') {
+    movePiece(-1);
+  } else if (event.key === ' ') {
+    // Hard drop piece (move piece to bottom instantly)
+    dropPiece(true);
+  }
+});
+
+function startGame() {
+  generatePiece();
+  dropPiece();
+}
+
+startGame();
