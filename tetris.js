@@ -13,11 +13,52 @@ function createBoard(rows, columns) {
 }
 
 const shapes = {
-  // ...ここに既存の形状の定義が入ります...
-}
+  I: [
+    [0, 0, 0, 0],
+    [1, 1, 1, 1],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+  ],
+  L: [
+    [2, 0, 0],
+    [2, 2, 2],
+    [0, 0, 0]
+  ],
+  J: [
+    [0, 0, 3],
+    [3, 3, 3],
+    [0, 0, 0]
+  ],
+  O: [
+    [4, 4],
+    [4, 4]
+  ],
+  T: [
+    [0, 5, 0],
+    [5, 5, 5],
+    [0, 0, 0]
+  ],
+  S: [
+    [0, 6, 6],
+    [6, 6, 0],
+    [0, 0, 0]
+  ],
+  Z: [
+    [7, 7, 0],
+    [0, 7, 7],
+    [0, 0, 0]
+  ]
+};
 
 const colors = [
-  // ...ここに既存の色の定義が入ります...
+  null,
+  'white',  // I
+  'white',  // L
+  'white',  // J
+  'white',  // O
+  'white',  // T
+  'white',  // S
+  'white'   // Z
 ];
 
 function draw() {
@@ -27,7 +68,7 @@ function draw() {
       ctx.fillRect(x, y, 1, 1);
     });
   });
-    console.log(currentPiece);
+
   currentPiece.shape.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
@@ -39,7 +80,6 @@ function draw() {
 }
 
 function mergePiece() {
-    console.log(currentPiece);
   currentPiece.shape.forEach((row, y) => {
     row.forEach((value, x) => {
       if (value !== 0) {
@@ -50,7 +90,6 @@ function mergePiece() {
 }
 
 function collision() {
-    console.log(currentPiece);
   for (let y = 0; y < currentPiece.shape.length; y++) {
     for (let x = 0; x < currentPiece.shape[y].length; x++) {
       if (
@@ -66,12 +105,10 @@ function collision() {
 function generatePiece() {
   const pieces = 'ILJOTSZ';
   const piece = pieces[Math.floor(Math.random() * pieces.length)];
-    console.log(currentPiece);
   currentPiece = { x: 3, y: 0, shape: shapes[piece] };
 }
 
 function dropPiece() {
-    console.log(currentPiece);
   currentPiece.y++;
   if (collision()) {
     currentPiece.y--;
