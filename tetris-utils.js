@@ -71,25 +71,42 @@ function merge(board, piece) {
   });
 }
 
-function rotate(piece) {
-  let p = JSON.parse(JSON.stringify(piece));
-  // Transpose matrix
-  for (let y = 0; y < p.shape.length; ++y) {
-    for (let x = 0; x < y; ++x) {
-      [p.shape[x][y], p.shape[y][x]] = [p.shape[y][x], p.shape[x][y]];
-    }
-  }
-  // Reverse the order of the columns.
-  p.shape.forEach(row => row.reverse());
-  return p;
+function rotate(matrix) {
+  const N = matrix.length - 1;
+  const result = matrix.map((row, i) =>
+    row.map((val, j) => matrix[N - j][i])
+  );
+  return result;
 }
 
 function getRandomPiece() {
-  let index = Math.floor(Math.random() * 7) + 1;
-  let shape = SHAPES[index];
-  return createPiece(shape);
+  let shapeIndex = Math.floor(Math.random() * SHAPES.length);
+  return createPiece(SHAPES[shapeIndex]);
 }
 
 function createPiece(shape) {
   return new Piece(shape);
+}
+
+// 追記部分
+function draw(board, piece, context) {
+  context.fillStyle = 'black';
+  context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+  drawMatrix(board, {x: 0, y: 0}, context);
+
+  if (piece) {
+    drawMatrix(piece.shape, piece.pos, context);
+  }
+}
+
+function drawMatrix(matrix, offset, context) {
+  matrix.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        context.fillStyle = COLORS[value];
+        context.fillRect(x + offset.x, y + offset.y, 1, 1);
+      }
+    });
+  });
 }
