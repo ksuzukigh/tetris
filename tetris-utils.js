@@ -1,3 +1,5 @@
+// tetris-utils.js
+
 const canvas = document.getElementById("game-board");
 const ctx = canvas.getContext('2d');
 
@@ -37,7 +39,6 @@ const shapes = {
     [0, 7, 7],
   ]
 };
-
 
 const colors = [
   null,
@@ -103,6 +104,21 @@ function dropPiece() {
     }
   }
   draw();
+  setTimeout(dropPiece, 1000);
+}
+
+function dropPieceOne() {
+  currentPiece.y++;
+  if (collision()) {
+    currentPiece.y--;
+    mergePiece();
+    generatePiece();
+    if (collision()) {
+      // Game over
+      board = createBoard(rows, columns);
+    }
+  }
+  draw();
 }
 
 function movePiece(dir) {
@@ -118,8 +134,6 @@ document.addEventListener('keydown', event => {
   } else if (event.key === 'ArrowRight') {
     movePiece(1);
   } else if (event.key === 'ArrowDown') {
-    dropPiece();
+    dropPieceOne();
   }
 });
-
-setTimeout(dropPiece, 1000);
