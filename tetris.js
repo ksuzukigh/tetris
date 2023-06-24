@@ -1,8 +1,5 @@
-
-
 let currentPiece;
 let board = createBoard(rows, columns);
-
 
 function mergePiece() {
   currentPiece.shape.forEach((row, y) => {
@@ -28,10 +25,39 @@ function collision() {
   return false;
 }
 
+function movePiece(dir) {
+  currentPiece.x += dir;
+  if (collision()) {
+    currentPiece.x -= dir;
+  }
+  draw();
+}
+
+function rotatePiece() {
+  // ここに回転のロジックを追加
+}
+
+function dropPieceOne() {
+  currentPiece.y++;
+  if (collision()) {
+    currentPiece.y--;
+    mergePiece();
+    generatePiece();
+  }
+  draw();
+}
 
 function startGame() {
   generatePiece();
   dropPiece();
+  window.addEventListener("keydown", handleKeydown);
+}
+
+function handleKeydown(e) {
+  if (e.key === "ArrowUp") rotatePiece();
+  else if (e.key === "ArrowRight") movePiece(1);
+  else if (e.key === "ArrowDown") dropPieceOne();
+  else if (e.key === "ArrowLeft") movePiece(-1);
 }
 
 startGame();
