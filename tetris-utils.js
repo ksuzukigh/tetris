@@ -1,8 +1,3 @@
-//描画に関連する定数（canvas、ctx、scale など）の定義
-//描画に関連する関数の定義（draw、createBoard、generatePiece、dropPiece など）
-//ピースの形と色に関連する定数の定義
-
-
 const canvas = document.getElementById("game-board");
 const ctx = canvas.getContext('2d');
 
