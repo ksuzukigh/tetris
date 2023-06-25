@@ -1,9 +1,7 @@
-// This file contains codes that handle game logic
-
+// tetris.js
 let currentPiece;
 let board = createBoard(rows, columns);
 
-// ピースをボードに結合する関数
 function mergePiece() {
   currentPiece.shape.forEach((row, y) => {
     row.forEach((value, x) => {
@@ -14,7 +12,6 @@ function mergePiece() {
   });
 }
 
-// ピースが衝突するかどうかを判定する関数
 function collision() {
   for (let y = 0; y < currentPiece.shape.length; y++) {
     for (let x = 0; x < currentPiece.shape[y].length; x++) {
@@ -29,10 +26,15 @@ function collision() {
   return false;
 }
 
-// ゲームを開始する関数
-function startGame() {
-  generatePiece();
-  dropPiece();
+// ピースを反時計回りに90度回転させる関数
+function rotatePiece(piece) {
+  for (let y = 0; y < piece.length; y++) {
+    for (let x = 0; x < y; x++) {
+      [piece[x][y], piece[y][x]] = [piece[y][x], piece[x][y]];
+    }
+  }
+  piece.forEach(row => row.reverse());
+  return piece;
 }
 
 // キーボードの操作を処理する関数
@@ -66,14 +68,22 @@ function handleKeyPress(event) {
         }
       }
       break;
-
+      
     case 38: // 上矢印キー
-      // ピースの回転処理はここに追加する
+      const originalShape = currentPiece.shape;
+      currentPiece.shape = rotatePiece([...currentPiece.shape]);
+      if (collision()) {
+        currentPiece.shape = originalShape;
+      }
       break;
   }
 }
 
-// キーボードの操作を監視する
-window.addEventListener('keydown', handleKeyPress);
+window.addEventListener("keydown", handleKeyPress);
+
+function startGame() {
+  generatePiece();
+  dropPiece();
+}
 
 startGame();
