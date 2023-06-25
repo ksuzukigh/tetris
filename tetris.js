@@ -12,48 +12,16 @@ function mergePiece() {
   });
 }
 
-function collision() {
-  for (let y = 0; y < currentPiece.shape.length; y++) {
-    for (let x = 0; x < currentPiece.shape[y].length; x++) {
-      if (
-        currentPiece.shape[y][x] !== 0 &&
-        (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0
-      ) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
 // ピースを反時計回りに90度回転させる関数
 function rotatePiece(piece) {
-  for (let y = 0; y < piece.length; y++) {
+  let newPiece = JSON.parse(JSON.stringify(piece));
+  for (let y = 0; y < newPiece.length; y++) {
     for (let x = 0; x < y; x++) {
-      [piece[x][y], piece[y][x]] = [piece[y][x], piece[x][y]];
+      [newPiece[x][y], newPiece[y][x]] = [newPiece[y][x], newPiece[x][y]];
     }
   }
-  piece.forEach(row => row.reverse());
-  return piece;
-}
-
-// 揃った行を探す関数
-function getCompletedRows() {
-  const completedRows = [];
-  for (let y = 0; y < board.length; y++) {
-    if (board[y].every(value => value !== 0)) {
-      completedRows.push(y);
-    }
-  }
-  return completedRows;
-}
-
-// 揃った行を消去する関数
-function removeRows(completedRows) {
-  for (let y of completedRows) {
-    board.splice(y, 1);
-    board.unshift(new Array(columns).fill(0));
-  }
+  newPiece.forEach(row => row.reverse());
+  return newPiece;
 }
 
 // キーボードの操作を処理する関数
@@ -76,24 +44,13 @@ function handleKeyPress(event) {
       break;
 
     case 40: // 下矢印キー
-      currentPiece.y++;
-      if (collision()) {
-        currentPiece.y--;
-        mergePiece();
-        removeRows(getCompletedRows());
-        generatePiece();
-        if (collision()) {
-          // ゲームオーバー
-          board = createBoard(rows, columns);
-        }
-      }
+      dropPiece();
       break;
       
     case 38: // 上矢印キー
-      const originalShape = currentPiece.shape;
-      currentPiece.shape = rotatePiece([...currentPiece.shape]);
-      if (collision()) {
-        currentPiece.shape = originalShape;
+      const newShape = rotatePiece(currentPiece.shape);
+      if (!collisionWithNewShape(newShape)) {
+        currentPiece.shape = newShape;
       }
       break;
   }
@@ -103,7 +60,7 @@ window.addEventListener("keydown", handleKeyPress);
 
 function startGame() {
   generatePiece();
-  dropPiece();
+  updateGame();
 }
 
 startGame();
