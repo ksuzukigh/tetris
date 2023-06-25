@@ -1,3 +1,4 @@
+// tetris-utils.js
 // ゲームの設定
 const rows = 20;
 const columns = 10;
@@ -115,3 +116,18 @@ function update() {
   dropPiece();
   requestAnimationFrame(update);
 }
+
+window.rows = rows;
+window.columns = columns;
+window.board = createBoard(rows, columns);
+window.currentPiece = undefined;
+window.colors = ['black', 'purple', 'yellow', 'orange', 'blue', 'aqua', 'green', 'red'];
+window.createBoard = createBoard;
+window.drawPiece = drawPiece;
+window.drawBoard = drawBoard;
+window.generatePiece = generatePiece;
+window.dropPiece = dropPiece;
+window.update = update;
+
+update();
+generatePiece();
