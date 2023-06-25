@@ -1,31 +1,10 @@
-let currentPiece;
-let board = createBoard(rows, columns);
-
-function mergePiece() {
-  currentPiece.shape.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        board[y + currentPiece.y][x + currentPiece.x] = value;
-      }
-    });
-  });
+// ピースを反時計回りに90度回転させる関数
+function rotatePiece(piece) {
+  const newPiece = piece[0].map((val, index) => piece.map(row => row[index])).reverse();
+  return newPiece;
 }
 
-function collision() {
-  for (let y = 0; y < currentPiece.shape.length; y++) {
-    for (let x = 0; x < currentPiece.shape[y].length; x++) {
-      if (
-        currentPiece.shape[y][x] !== 0 &&
-        (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0
-      ) {
-        console.log("Collision at: ", x + currentPiece.x, y + currentPiece.y, "Piece: ", currentPiece.shape);
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
+// キーボードの操作を処理する関数
 function handleKeyPress(event) {
   const { keyCode } = event;
 
