@@ -15,7 +15,6 @@
             display: flex;
             justify-content: center;
             position: absolute;
-            bottom: 10%;
             width: 100%;
         }
         .button {
@@ -35,29 +34,29 @@
             height: 300px;
             width: 400px;
             position: absolute;
-            left: 15%; /* Adjusted */
-            top: calc(10% + 800px + 100px); /* Adjusted */
+            left: calc(50% - 450px); /* Adjusted */
+            top: calc(10% + 800px + 500px); /* Adjusted */
         }
         .right-button {
             height: 300px;
             width: 400px;
             position: absolute;
-            right: 15%; /* Adjusted */
-            top: calc(10% + 800px + 100px); /* Adjusted */
+            left: calc(50% + 50px); /* Adjusted */
+            top: calc(10% + 800px + 500px); /* Adjusted */
         }
         .up-button {
             height: 400px;
             width: 300px;
             position: absolute;
-            left: 37.5%; /* Adjusted */
-            top: calc(10% + 800px); /* Adjusted */
+            left: calc(50% - 150px); /* Adjusted */
+            top: calc(10% + 800px + 100px); /* Adjusted */
         }
         .down-button {
             height: 400px;
             width: 300px;
             position: absolute;
-            left: 37.5%; /* Adjusted */
-            top: calc(10% + 800px + 100px + 300px + 100px); /* Adjusted */
+            left: calc(50% - 150px); /* Adjusted */
+            top: calc(10% + 800px + 500px + 300px + 100px); /* Adjusted */
         }
     </style>
 </head>
@@ -66,10 +65,4 @@
     <div id="controls">
         <button class="button left-button" id="left-button"></button>
         <button class="button up-button" id="up-button"></button>
-        <button class="button down-button" id="down-button"></button>
-        <button class="button right-button" id="right-button"></button>
-    </div>
-    <script src="tetris-utils.js"></script>
-    <script src="tetris.js"></script>
-</body>
-</html>
+        <button class="button
