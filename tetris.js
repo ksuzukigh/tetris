@@ -1,7 +1,3 @@
-const rows = 40;
-const columns = 10;
-const squareColors = ['white', 'red', 'blue', 'yellow', 'green', 'purple', 'cyan', 'orange'];
-const pieceColors = ['red', 'blue', 'yellow', 'green', 'purple', 'cyan', 'orange'];
 let currentPiece;
 let board = createBoard(rows, columns);
 
@@ -44,25 +40,20 @@ function handleKeyPress(event) {
 
   switch (keyCode) {
     case 37: // 左矢印キー
-      erasePiece(currentPiece);
       currentPiece.x--;
       if (collision()) {
         currentPiece.x++;
       }
-      drawPiece(currentPiece);
       break;
 
     case 39: // 右矢印キー
-      erasePiece(currentPiece);
       currentPiece.x++;
       if (collision()) {
         currentPiece.x--;
       }
-      drawPiece(currentPiece);
       break;
 
     case 40: // 下矢印キー
-      erasePiece(currentPiece);
       currentPiece.y++;
       if (collision()) {
         currentPiece.y--;
@@ -73,36 +64,16 @@ function handleKeyPress(event) {
           board = createBoard(rows, columns);
         }
       }
-      drawPiece(currentPiece);
       break;
       
     case 38: // 上矢印キー
-      erasePiece(currentPiece);
       const originalShape = currentPiece.shape;
       currentPiece.shape = rotatePiece([...currentPiece.shape]);
       if (collision()) {
         currentPiece.shape = originalShape;
       }
-      drawPiece(currentPiece);
       break;
   }
-}
-
-function dropPiece() {
-  erasePiece(currentPiece);
-  currentPiece.y++;
-  if (collision()) {
-    currentPiece.y--;
-    mergePiece();
-    generatePiece();
-    if (collision()) {
-      // ゲームオーバー
-      board = createBoard(rows, columns);
-    }
-  }
-  drawPiece(currentPiece);
-  drawBoard(board);
-  setTimeout(dropPiece, 1000);
 }
 
 function startGame() {
