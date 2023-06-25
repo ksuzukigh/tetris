@@ -1,3 +1,8 @@
+//描画に関連する定数（canvas、ctx、scale など）の定義
+//描画に関連する関数の定義（draw、createBoard、generatePiece、dropPiece など）
+//ピースの形と色に関連する定数の定義
+
+
 const canvas = document.getElementById("game-board");
 const ctx = canvas.getContext('2d');
 
@@ -5,6 +10,7 @@ const scale = 40;
 
 const rows = canvas.height / scale;
 const columns = canvas.width / scale;
+
 
 const shapes = {
   I: [
@@ -50,6 +56,7 @@ const colors = [
   'red'      // Z
 ];
 
+
 function createBoard(rows, columns) {
   return Array.from({ length: rows }, () => Array(columns).fill(0));
 }
@@ -85,13 +92,24 @@ function draw() {
   }
 }
 
-function update() {
-  draw();
-  dropPiece();
-  requestAnimationFrame(update);
+function generatePiece() {
+  const pieces = 'ILJOTSZ';
+  const piece = pieces[Math.floor(Math.random() * pieces.length)];
+  currentPiece = { x: 5, y: 0, shape: shapes[piece] };
 }
 
-window.update = update;
+function dropPiece() {
+  currentPiece.y++;
+  if (collision()) {
+    currentPiece.y--;
+    mergePiece();
+    generatePiece();
+    if (collision()) {
+      // Game over
+      board = createBoard(rows, columns);
+    }
+  }
+  draw();
+  setTimeout(dropPiece, 1000);
+}
 
-generatePiece();
-update();
