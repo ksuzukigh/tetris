@@ -49,8 +49,24 @@ const colors = [
   'red'      // Z
 ];
 
+let currentPiece;
+let board = createBoard(rows, columns);
+
 function createBoard(rows, columns) {
   return Array.from({ length: rows }, () => Array(columns).fill(0));
+}
+
+function clearLines() {
+  outer: for (let y = board.length - 1; y >= 0; y--) {
+    for (let x = 0; x < board[y].length; x++) {
+      if (board[y][x] === 0) {
+        continue outer;
+      }
+    }
+
+    const row = board.splice(y, 1)[0].fill(0);
+    board.unshift(row);
+  }
 }
 
 function draw() {
@@ -90,24 +106,6 @@ function generatePiece() {
   currentPiece = { x: 5, y: 0, shape: shapes[piece] };
 }
 
-function dropPiece() {
-  currentPiece.y++;
-  if (collision()) {
-    currentPiece.y--;
-    mergePiece();
-    generatePiece();
-    if (collision()) {
-      // Game over
-      board = createBoard(rows, columns);
-    }
-  }
-  draw();
-  setTimeout(dropPiece, 1000);
-}
-
-let currentPiece;
-let board = createBoard(rows, columns);
-
 function mergePiece() {
   currentPiece.shape.forEach((row, y) => {
     row.forEach((value, x) => {
@@ -116,6 +114,7 @@ function mergePiece() {
       }
     });
   });
+  clearLines();
 }
 
 function collision() {
@@ -131,3 +130,34 @@ function collision() {
   }
   return false;
 }
+
+function rotatePiece(piece) {
+  const newPiece = piece[0].map((val, index) => piece.map(row => row[index])).reverse();
+  return newPiece;
+}
+
+function dropPiece() {
+  if (!currentPiece) return;
+  currentPiece.y++;
+  if (collision()) {
+    currentPiece.y--;
+    mergePiece();
+    generatePiece();
+    if (collision()) {
+      // Game over
+      board = createBoard(rows, columns);
+    }
+  }
+}
+
+function startGame() {
+  generatePiece();
+  dropPiece();
+}
+
+setInterval(() => {
+  dropPiece();
+  draw();
+}, 1000 / 2);
+
+startGame();
