@@ -56,6 +56,17 @@ function removeRow() {
 
 // ... (omitted for brevity)
 
+function mergePiece() {
+  currentPiece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        board[y + currentPiece.y][x + currentPiece.x] = value;
+      }
+    });
+  });
+  removeRow(); // ピースがボードに結合した後、行を消去
+}
+
 function startGame() {
   generatePiece();
   dropPiece();
