@@ -7,69 +7,57 @@ const rows = canvas.height / scale;
 const columns = canvas.width / scale;
 
 let score = 0;
+const scoreElement = document.getElementById("score");
 
 const shapes = {
   I: [
     [1, 1, 1, 1],
   ],
-  // ... (omitted for brevity)
+  // ... omitted for brevity ...
 };
 
-// ... (omitted for brevity)
+const colors = [
+  null,
+  'cyan',    // I
+  'blue',    // J
+  'orange',  // L
+  'yellow',  // O
+  'purple',  // T
+  'green',   // S
+  'red'      // Z
+];
 
-function updateScore() {
-  document.getElementById('score').innerText = "Score: " + score;
-}
+// ... omitted for brevity ...
 
-function createBoard(rows, columns) {
-  return Array.from({ length: rows }, () => Array(columns).fill(0));
-}
-
-function draw() {
-  // ... (omitted for brevity)
-}
-
-function generatePiece() {
-  // ... (omitted for brevity)
-}
-
-function dropPiece() {
-  // ... (omitted for brevity)
-}
-
-function removeRow() {
-  outer: for (let y = rows - 1; y >= 0; --y) {
-    for (let x = 0; x < columns; ++x) {
-      if (board[y][x] === 0) {
-        continue outer;
-      }
+function removeFullRows() {
+  for (let y = rows - 1; y >= 0; y--) {
+    if (board[y].every(value => value !== 0)) {
+      board.splice(y, 1);
+      board.unshift(Array(columns).fill(0));
+      score += 10;
+      updateScore();
     }
-    
-    const row = board.splice(y, 1)[0].fill(0);
-    board.unshift(row);
-    ++y;
-
-    score += 10;
-    updateScore();
   }
 }
 
-// ... (omitted for brevity)
-
-function mergePiece() {
-  currentPiece.shape.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        board[y + currentPiece.y][x + currentPiece.x] = value;
-      }
-    });
-  });
-  removeRow(); // ピースがボードに結合した後、行を消去
+function updateScore() {
+  scoreElement.innerText = `Score: ${score}`;
 }
+
+function dropPiece() {
+  // ... omitted for brevity ...
+  removeFullRows();
+  draw();
+  setTimeout(dropPiece, 1000);
+}
+
+// ... omitted for brevity ...
 
 function startGame() {
   generatePiece();
   dropPiece();
+  score = 0;
+  updateScore();
 }
 
 startGame();
