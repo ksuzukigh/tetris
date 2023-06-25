@@ -1,46 +1,48 @@
-const canvas = document.getElementById("game-board");
-const context = canvas.getContext("2d");
-const scale = 20;
-const rows = canvas.height / scale;
-const columns = canvas.width / scale;
+// ゲームの設定
+const rows = 20;
+const columns = 10;
+const squareSize = 20;
+
+// ピースの定義
 const pieces = [
   [
     [0, 0, 0, 0],
     [1, 1, 1, 1],
     [0, 0, 0, 0],
-    [0, 0, 0, 0],
+    [0, 0, 0, 0]
   ],
   [
     [2, 0, 0],
     [2, 2, 2],
-    [0, 0, 0],
+    [0, 0, 0]
   ],
   [
     [0, 0, 3],
     [3, 3, 3],
-    [0, 0, 0],
+    [0, 0, 0]
   ],
   [
     [4, 4],
-    [4, 4],
+    [4, 4]
   ],
   [
     [0, 5, 5],
     [5, 5, 0],
-    [0, 0, 0],
+    [0, 0, 0]
   ],
   [
     [6, 6, 0],
     [0, 6, 6],
-    [0, 0, 0],
+    [0, 0, 0]
   ],
   [
     [0, 7, 0],
     [7, 7, 7],
-    [0, 0, 0],
-  ],
+    [0, 0, 0]
+  ]
 ];
 
+// ゲームボードの作成
 function createBoard(rows, columns) {
   let board = [];
   for (let row = 0; row < rows; row++) {
@@ -52,37 +54,48 @@ function createBoard(rows, columns) {
   return board;
 }
 
-function drawBoard(board) {
-  for (let y = 0; y < board.length; y++) {
-    for (let x = 0; x < board[y].length; x++) {
-      drawSquare(x, y, board[y][x]);
-    }
-  }
+// キャンバスの設定
+let canvas = document.getElementById('game-board');
+let context = canvas.getContext('2d');
+context.scale(squareSize, squareSize);
+
+// ピースの描画
+function drawPiece(x, y, shape) {
+  shape.forEach((row, dy) => {
+    row.forEach((value, dx) => {
+      if (value !== 0) {
+        context.fillStyle = colors[value];
+        context.fillRect(x + dx, y + dy, 1, 1);
+      }
+    });
+  });
 }
 
-function drawSquare(x, y, colorIndex) {
-  context.fillStyle = ["#000000", "#FF0D72", "#0DC2FF", "#0DFF72", "#F538FF", "#FF8E0D", "#FFE138", "#3877FF"][colorIndex];
-  context.fillRect(x * scale, y * scale, scale, scale);
+// ボードの描画
+function drawBoard() {
+  context.fillStyle = '#000';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  board.forEach((row, y) => {
+    row.forEach((value, x) => {
+      context.fillStyle = colors[value];
+      context.fillRect(x, y, 1, 1);
+    });
+  });
+  drawPiece(currentPiece.x, currentPiece.y, currentPiece.shape);
 }
 
+// ピースの生成
 function generatePiece() {
+  let index = Math.floor(Math.random() * pieces.length);
+  let shape = pieces[index];
   currentPiece = {
-    x: 0,
+    x: Math.floor(columns / 2) - Math.floor(shape[0].length / 2),
     y: 0,
-    shape: pieces[Math.floor(Math.random() * pieces.length)],
+    shape: shape
   };
 }
 
-function drawPiece(piece) {
-  for (let y = 0; y < piece.shape.length; y++) {
-    for (let x = 0; x < piece.shape[y].length; x++) {
-      if (piece.shape[y][x] !== 0) {
-        drawSquare(x + piece.x, y + piece.y, piece.shape[y][x]);
-      }
-    }
-  }
-}
-
+// ピースの落下
 function dropPiece() {
   currentPiece.y++;
   if (collision()) {
@@ -90,40 +103,15 @@ function dropPiece() {
     mergePiece();
     generatePiece();
     if (collision()) {
-      // game over
+      // ゲームオーバー
       board = createBoard(rows, columns);
     }
   }
 }
 
-function mergePiece() {
-  currentPiece.shape.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        board[y + currentPiece.y][x + currentPiece.x] = value;
-      }
-    });
-  });
+// 描画更新
+function update() {
+  drawBoard();
+  dropPiece();
+  requestAnimationFrame(update);
 }
-
-function collision() {
-  for (let y = 0; y < currentPiece.shape.length; y++) {
-    for (let x = 0; x < currentPiece.shape[y].length; x++) {
-      if (
-        currentPiece.shape[y][x] !== 0 &&
-        (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0
-      ) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-function startGame() {
-  drawBoard(board);
-  drawPiece(currentPiece);
-  setTimeout(startGame, 1000);
-}
-
-startGame();
