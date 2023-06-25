@@ -49,20 +49,85 @@ const colors = [
   'red'      // Z
 ];
 
-let currentPiece;  // この行の重複宣言を削除しました。
-let board = createBoard(rows, columns);
-
 function createBoard(rows, columns) {
   return Array.from({ length: rows }, () => Array(columns).fill(0));
 }
 
-// 各関数の定義 (draw, generatePiece, dropPiece, mergePiece, collision, rotatePiece, handleKeyPress, startGame) は省略します。
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-window.addEventListener("keydown", handleKeyPress);
+  // Draw the game board
+  board.forEach((row, y) => {
+    row.forEach((value, x) => {
+      // Fill in the cell if it is not empty
+      if (value !== 0) {
+        ctx.fillStyle = colors[value];
+        ctx.fillRect(x * scale, y * scale, scale, scale);
+      }
 
-function startGame() {
-  generatePiece();
-  dropPiece();
+      // Draw grid lines
+      ctx.strokeStyle = '#DDD';
+      ctx.strokeRect(x * scale, y * scale, scale, scale);
+    });
+  });
+
+  // Draw the current piece
+  if (currentPiece) {
+    currentPiece.shape.forEach((row, y) => {
+      row.forEach((value, x) => {
+        if (value !== 0) {
+          ctx.fillStyle = colors[value];
+          ctx.fillRect((x + currentPiece.x) * scale, (y + currentPiece.y) * scale, scale, scale);
+        }
+      });
+    });
+  }
 }
 
-startGame();
+function generatePiece() {
+  const pieces = 'ILJOTSZ';
+  const piece = pieces[Math.floor(Math.random() * pieces.length)];
+  currentPiece = { x: 5, y: 0, shape: shapes[piece] };
+}
+
+function dropPiece() {
+  currentPiece.y++;
+  if (collision()) {
+    currentPiece.y--;
+    mergePiece();
+    generatePiece();
+    if (collision()) {
+      // Game over
+      board = createBoard(rows, columns);
+    }
+  }
+  draw();
+  setTimeout(dropPiece, 1000);
+}
+
+let currentPiece;
+let board = createBoard(rows, columns);
+
+function mergePiece() {
+  currentPiece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        board[y + currentPiece.y][x + currentPiece.x] = value;
+      }
+    });
+  });
+}
+
+function collision() {
+  for (let y = 0; y < currentPiece.shape.length; y++) {
+    for (let x = 0; x < currentPiece.shape[y].length; x++) {
+      if (
+        currentPiece.shape[y][x] !== 0 &&
+        (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
