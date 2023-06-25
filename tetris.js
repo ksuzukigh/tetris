@@ -1,89 +1,92 @@
-// tetris.js
-let currentPiece;
-let board = createBoard(rows, columns);
+const canvas = document.getElementById('game-board');
+const context = canvas.getContext('2d');
+const scale = 20;
 
-function mergePiece() {
-  currentPiece.shape.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        board[y + currentPiece.y][x + currentPiece.x] = value;
-      }
-    });
-  });
+const tetriminos = [
+  [
+    [1, 1, 1, 1]
+  ],
+  [
+    [1, 1, 1, 0],
+    [0, 0, 1, 0]
+  ],
+  [
+    [0, 0, 1, 0],
+    [1, 1, 1, 0]
+  ],
+  [
+    [0, 1, 1],
+    [1, 1]
+  ],
+  [
+    [1, 1],
+    [1, 1]
+  ],
+  [
+    [1, 1, 0],
+    [0, 1, 1]
+  ],
+  [
+    [1, 1, 1],
+    [0, 1, 0]
+  ]
+];
+
+function generatePiece() {
+  const id = Math.floor(Math.random() * tetriminos.length);
+  const shape = tetriminos[id];
+
+  return {
+    id: id,
+    shape: shape,
+    x: Math.floor(columns / 2) - Math.floor(shape[0].length / 2),
+    y: 0
+  };
 }
 
-function collision() {
-  for (let y = 0; y < currentPiece.shape.length; y++) {
-    for (let x = 0; x < currentPiece.shape[y].length; x++) {
-      if (
-        currentPiece.shape[y][x] !== 0 &&
-        (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0
-      ) {
-        return true;
+function drawSquare(x, y, color) {
+  context.fillStyle = color;
+  context.fillRect(x * scale, y * scale, scale, scale);
+
+  context.strokeStyle = 'black';
+  context.strokeRect(x * scale, y * scale, scale, scale);
+}
+
+function drawPiece(piece) {
+  for (let y = 0; y < piece.shape.length; y++) {
+    for (let x = 0; x < piece.shape[y].length; x++) {
+      if (piece.shape[y][x] === 1) {
+        drawSquare(piece.x + x, piece.y + y, pieceColors[piece.id]);
       }
     }
   }
-  return false;
 }
 
-// ピースを反時計回りに90度回転させる関数
-function rotatePiece(piece) {
-  for (let y = 0; y < piece.length; y++) {
-    for (let x = 0; x < y; x++) {
-      [piece[x][y], piece[y][x]] = [piece[y][x], piece[x][y]];
+function drawBoard(board) {
+  for (let y = 0; y < board.length; y++) {
+    for (let x = 0; x < board[y].length; x++) {
+      drawSquare(x, y, squareColors[board[y][x]]);
     }
   }
-  piece.forEach(row => row.reverse());
-  return piece;
 }
 
-// キーボードの操作を処理する関数
-function handleKeyPress(event) {
-  const { keyCode } = event;
-
-  switch (keyCode) {
-    case 37: // 左矢印キー
-      currentPiece.x--;
-      if (collision()) {
-        currentPiece.x++;
+function erasePiece(piece) {
+  for (let y = 0; y < piece.shape.length; y++) {
+    for (let x = 0; x < piece.shape[y].length; x++) {
+      if (piece.shape[y][x] === 1) {
+        drawSquare(piece.x + x, piece.y + y, squareColors[0]);
       }
-      break;
-
-    case 39: // 右矢印キー
-      currentPiece.x++;
-      if (collision()) {
-        currentPiece.x--;
-      }
-      break;
-
-    case 40: // 下矢印キー
-      currentPiece.y++;
-      if (collision()) {
-        currentPiece.y--;
-        mergePiece();
-        generatePiece();
-        if (collision()) {
-          // ゲームオーバー
-          board = createBoard(rows, columns);
-        }
-      }
-      break;
-      
-    case 38: // 上矢印キー
-      const originalShape = currentPiece.shape;
-      currentPiece.shape = rotatePiece([...currentPiece.shape]);
-      if (collision()) {
-        currentPiece.shape = originalShape;
-      }
-      break;
+    }
   }
 }
 
-window.addEventListener("keydown", handleKeyPress);
-
-function startGame() {
-  generatePiece();
-  dropPiece();
+function createBoard(rows, columns) {
+  let board = [];
+  for (let y = 0; y < rows; y++) {
+    board[y] = [];
+    for (let x = 0; x < columns; x++) {
+      board[y][x] = 0;
+    }
+  }
+  return board;
 }
-
-startGame();
