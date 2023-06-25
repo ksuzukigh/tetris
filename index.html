@@ -3,31 +3,18 @@
 <head>
     <title>Tetris</title>
     <style>
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: #202028;
-        }
         #game-board {
-            width: 400px;
-            height: 800px;
-            border: 1px solid #FFF;
-        }
-        #score {
             position: absolute;
-            top: 20px;
             left: 50%;
-            transform: translateX(-50%);
-            font-size: 24px;
-            color: #FFF;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #202028;
+            border: 1px solid #FFF;
         }
     </style>
 </head>
 <body>
-    <div id="score">0</div>
-    <canvas id="game-board"></canvas>
+    <canvas id="game-board" width="400" height="800"></canvas>
     <script src="tetris-utils.js"></script>
     <script src="tetris.js"></script>
 </body>
