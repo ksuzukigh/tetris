@@ -11,19 +11,6 @@ function mergePiece() {
   });
 }
 
-function clearRows() {
-  outer: for (let y = board.length -1; y >= 0; --y) {
-    for (let x = 0; x < board[y].length; ++x) {
-      if (board[y][x] === 0) {
-        continue outer;
-      }
-    }
-
-    const row = board.splice(y, 1)[0].fill(0);
-    board.unshift(row);
-  }
-}
-
 function collision() {
   for (let y = 0; y < currentPiece.shape.length; y++) {
     for (let x = 0; x < currentPiece.shape[y].length; x++) {
@@ -31,6 +18,7 @@ function collision() {
         currentPiece.shape[y][x] !== 0 &&
         (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0
       ) {
+        console.log("Collision at: ", x + currentPiece.x, y + currentPiece.y, "Piece: ", currentPiece.shape);
         return true;
       }
     }
@@ -38,13 +26,6 @@ function collision() {
   return false;
 }
 
-// ピースを反時計回りに90度回転させる関数
-function rotatePiece(piece) {
-  const newPiece = piece[0].map((val, index) => piece.map(row => row[index])).reverse();
-  return newPiece;
-}
-
-// キーボードの操作を処理する関数
 function handleKeyPress(event) {
   const { keyCode } = event;
 
@@ -68,7 +49,6 @@ function handleKeyPress(event) {
       if (collision()) {
         currentPiece.y--;
         mergePiece();
-        clearRows();
         generatePiece();
         if (collision()) {
           // ゲームオーバー
@@ -76,26 +56,12 @@ function handleKeyPress(event) {
         }
       }
       break;
-
+      
     case 38: // 上矢印キー
       const originalShape = currentPiece.shape;
       currentPiece.shape = rotatePiece([...currentPiece.shape]);
       if (collision()) {
         currentPiece.shape = originalShape;
-      }
-      break;
-      
-    case 32: // スペースキー
-      while (!collision()) {
-        currentPiece.y++;
-      }
-      currentPiece.y--;
-      mergePiece();
-      clearRows();
-      generatePiece();
-      if (collision()) {
-        // ゲームオーバー
-        board = createBoard(rows, columns);
       }
       break;
   }
