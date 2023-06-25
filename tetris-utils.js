@@ -1,13 +1,15 @@
 const canvas = document.getElementById("game-board");
 const ctx = canvas.getContext('2d');
+const scoreElement = document.getElementById("score");
 
 const scale = 40;
+let score = 0;
 
 const rows = canvas.height / scale;
 const columns = canvas.width / scale;
 
-let score = 0;
-const scoreElement = document.getElementById("score");
+let currentPiece;
+let board = createBoard(rows, columns);
 
 const shapes = {
   I: [
@@ -64,10 +66,9 @@ function draw() {
       if (value !== 0) {
         ctx.fillStyle = colors[value];
         ctx.fillRect(x * scale, y * scale, scale, scale);
+        ctx.strokeStyle = '#DDD';
+        ctx.strokeRect(x * scale, y * scale, scale, scale);
       }
-
-      ctx.strokeStyle = '#DDD';
-      ctx.strokeRect(x * scale, y * scale, scale, scale);
     });
   });
 
@@ -81,6 +82,8 @@ function draw() {
       });
     });
   }
+
+  scoreElement.innerText = `Score: ${score}`;
 }
 
 function generatePiece() {
@@ -89,8 +92,19 @@ function generatePiece() {
   currentPiece = { x: 5, y: 0, shape: shapes[piece] };
 }
 
-let currentPiece;
-let board = createBoard(rows, columns);
+function dropPiece() {
+  currentPiece.y++;
+  if (collision()) {
+    currentPiece.y--;
+    mergePiece();
+    generatePiece();
+    if (collision()) {
+      board = createBoard(rows, columns);
+    }
+  }
+  draw();
+  setTimeout(dropPiece, 1000);
+}
 
 function mergePiece() {
   currentPiece.shape.forEach((row, y) => {
@@ -105,69 +119,38 @@ function mergePiece() {
 function collision() {
   for (let y = 0; y < currentPiece.shape.length; y++) {
     for (let x = 0; x < currentPiece.shape[y].length; x++) {
-      if (
-        currentPiece.shape[y][x] !== 0 &&
-        (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0
-      ) {
+      if (currentPiece.shape[y][x] !== 0 &&
+        (board[y + currentPiece.y] &&
+          board[y + currentPiece.y][x + currentPiece.x]) !== 0) {
         return true;
       }
     }
   }
-  return false;
 }
 
-function removeFullRows() {
-  for (let y = rows - 1; y >= 0; y--) {
-    if (board[y].every(value => value !== 0)) {
-      board.splice(y, 1);
-      board.unshift(Array(columns).fill(0));
-      score += 10;
-      updateScore();
+function rotatePiece(piece) {
+  for (let y = 0; y < piece.shape.length; ++y) {
+    for (let x = 0; x < y; ++x) {
+      [piece.shape[x][y], piece.shape[y][x]] = [piece.shape[y][x], piece.shape[x][y]];
     }
   }
-}
-
-function updateScore() {
-  scoreElement.innerText = `Score: ${score}`;
-}
-
-function dropPiece() {
-  currentPiece.y++;
-  if (collision()) {
-    currentPiece.y--;
-    mergePiece();
-    removeFullRows();
-    generatePiece();
-  }
-  draw();
-  setTimeout(dropPiece, 1000);
+  piece.shape.forEach(row => row.reverse());
 }
 
 function handleKeyPress(event) {
-  switch (event.key) {
-    case 'ArrowUp':
-      currentPiece.shape = rotate(currentPiece.shape);
-      break;
-    case 'ArrowDown':
-      currentPiece.y++;
-      break;
-    case 'ArrowRight':
-      currentPiece.x++;
-      break;
-    case 'ArrowLeft':
-      currentPiece.x--;
-      break;
+  if (event.key === 'ArrowUp') rotatePiece(currentPiece);
+  if (event.key === 'ArrowRight' || event.key === 'd') currentPiece.x++;
+  if (event.key === 'ArrowLeft' || event.key === 'a') currentPiece.x--;
+  if (event.key === 'ArrowDown' || event.key === 's') currentPiece.y++;
+  if (collision()) {
+    if (event.key === 'ArrowRight' || event.key === 'd') currentPiece.x--;
+    if (event.key === 'ArrowLeft' || event.key === 'a') currentPiece.x++;
+    if (event.key === 'ArrowDown' || event.key === 's') currentPiece.y--;
+    if (event.key === 'ArrowUp') rotatePiece(currentPiece);
   }
   draw();
 }
 
+generatePiece();
+dropPiece();
 document.addEventListener('keydown', handleKeyPress);
-
-function startGame() {
-  generatePiece();
-  dropPiece();
-  score = 0;
-  updateScore();
-}
-
-startGame();
