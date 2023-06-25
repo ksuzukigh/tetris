@@ -28,13 +28,8 @@ function collision() {
 
 // ピースを反時計回りに90度回転させる関数
 function rotatePiece(piece) {
-  for (let y = 0; y < piece.length; y++) {
-    for (let x = 0; x < y; x++) {
-      [piece[x][y], piece[y][x]] = [piece[y][x], piece[x][y]];
-    }
-  }
-  piece.forEach(row => row.reverse());
-  return piece;
+  const newPiece = piece[0].map((val, index) => piece.map(row => row[index])).reverse();
+  return newPiece;
 }
 
 // キーボードの操作を処理する関数
