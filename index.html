@@ -6,8 +6,8 @@
         #game-board {
             position: absolute;
             left: 50%;
-            top: 20%;
-            transform: translate(-50%, -20%);
+            top: 10%; /* Adjusted */
+            transform: translate(-50%, -10%);
             background: #202028;
             border: 1px solid #FFF;
         }
@@ -19,8 +19,8 @@
             width: 100%;
         }
         .button {
-            background-color: #555555;
-            border: none;
+            background-color: #FFFFFF00; /* Transparent */
+            border: 1px solid #555555; /* Outlined */
             color: white;
             text-align: center;
             display: inline-block;
@@ -36,35 +36,38 @@
             width: 400px;
             position: absolute;
             left: 20%;
+            top: 300px; /* Adjusted */
         }
         .right-button {
             height: 300px;
             width: 400px;
             position: absolute;
             right: 20%;
+            top: 300px; /* Adjusted */
         }
         .up-button {
             height: 400px;
             width: 300px;
             position: absolute;
             left: 40%;
+            top: 150px; /* Adjusted */
         }
         .down-button {
             height: 400px;
             width: 300px;
             position: absolute;
             left: 40%;
-            top: 300px;
+            top: 550px; /* Adjusted */
         }
     </style>
 </head>
 <body>
     <canvas id="game-board" width="400" height="800"></canvas>
     <div id="controls">
-        <button class="button left-button" id="left-button">Left</button>
-        <button class="button up-button" id="up-button">Rotate</button>
-        <button class="button down-button" id="down-button">Down</button>
-        <button class="button right-button" id="right-button">Right</button>
+        <button class="button left-button" id="left-button"></button>
+        <button class="button up-button" id="up-button"></button>
+        <button class="button down-button" id="down-button"></button>
+        <button class="button right-button" id="right-button"></button>
     </div>
     <script src="tetris-utils.js"></script>
     <script src="tetris.js"></script>
