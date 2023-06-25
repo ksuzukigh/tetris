@@ -6,7 +6,6 @@ const scale = 40;
 const rows = canvas.height / scale;
 const columns = canvas.width / scale;
 
-
 const shapes = {
   I: [
     [1, 1, 1, 1],
@@ -39,7 +38,6 @@ const shapes = {
   ]
 };
 
-
 const colors = [
   null,
   'cyan',    // I
@@ -51,9 +49,25 @@ const colors = [
   'red'      // Z
 ];
 
+let currentPiece;
+let board = createBoard(rows, columns);
 
 function createBoard(rows, columns) {
   return Array.from({ length: rows }, () => Array(columns).fill(0));
+}
+
+function clearRows() {
+  outer: for (let y = board.length -1; y >= 0; --y) {
+    for (let x = 0; x < board[y].length; ++x) {
+      if (board[y][x] === 0) {
+        continue outer;
+      }
+    }
+
+    const row = board.splice(y, 1)[0].fill(0);
+    board.unshift(row);
+    console.log("Clearing row: ", y); // ログステートメントを追加
+  }
 }
 
 function draw() {
@@ -98,6 +112,7 @@ function dropPiece() {
   if (collision()) {
     currentPiece.y--;
     mergePiece();
+    clearRows();  // Add this to clear rows whenever a piece is dropped and merged
     generatePiece();
     if (collision()) {
       // Game over
@@ -108,3 +123,85 @@ function dropPiece() {
   setTimeout(dropPiece, 1000);
 }
 
+function mergePiece() {
+  currentPiece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        board[y + currentPiece.y][x + currentPiece.x] = value;
+      }
+    });
+  });
+}
+
+function collision() {
+  for (let y = 0; y < currentPiece.shape.length; y++) {
+    for (let x = 0; x < currentPiece.shape[y].length; x++) {
+      if (
+        currentPiece.shape[y][x] !== 0 &&
+        (board[y + currentPiece.y] && board[y + currentPiece.y][x + currentPiece.x]) !== 0
+      ) {
+        console.log("Collision at: ", x + currentPiece.x, y + currentPiece.y);  // ログステートメントを追加
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// ピースを反時計回りに90度回転させる関数
+function rotatePiece(piece) {
+  const newPiece = piece[0].map((val, index) => piece.map(row => row[index])).reverse();
+  return newPiece;
+}
+
+// キーボードの操作を処理する関数
+function handleKeyPress(event) {
+  const { keyCode } = event;
+
+  switch (keyCode) {
+    case 37: // 左矢印キー
+      currentPiece.x--;
+      if (collision()) {
+        currentPiece.x++;
+      }
+      break;
+
+    case 39: // 右矢印キー
+      currentPiece.x++;
+      if (collision()) {
+        currentPiece.x--;
+      }
+      break;
+
+    case 40: // 下矢印キー
+      currentPiece.y++;
+      if (collision()) {
+        currentPiece.y--;
+        mergePiece();
+        clearRows();  // Add this to clear rows whenever a piece is dropped and merged
+        generatePiece();
+        if (collision()) {
+          // ゲームオーバー
+          board = createBoard(rows, columns);
+        }
+      }
+      break;
+
+    case 38: // 上矢印キー
+      const originalShape = currentPiece.shape;
+      currentPiece.shape = rotatePiece([...currentPiece.shape]);
+      if (collision()) {
+        currentPiece.shape = originalShape;
+      }
+      break;
+  }
+}
+
+window.addEventListener("keydown", handleKeyPress);
+
+function startGame() {
+  generatePiece();
+  dropPiece();
+}
+
+startGame();
