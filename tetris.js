@@ -28,8 +28,32 @@ function collision() {
 
 // ピースを反時計回りに90度回転させる関数
 function rotatePiece(piece) {
-  const newPiece = piece[0].map((val, index) => piece.map(row => row[index])).reverse();
-  return newPiece;
+  for (let y = 0; y < piece.length; y++) {
+    for (let x = 0; x < y; x++) {
+      [piece[x][y], piece[y][x]] = [piece[y][x], piece[x][y]];
+    }
+  }
+  piece.forEach(row => row.reverse());
+  return piece;
+}
+
+// 揃った行を探す関数
+function getCompletedRows() {
+  const completedRows = [];
+  for (let y = 0; y < board.length; y++) {
+    if (board[y].every(value => value !== 0)) {
+      completedRows.push(y);
+    }
+  }
+  return completedRows;
+}
+
+// 揃った行を消去する関数
+function removeRows(completedRows) {
+  for (let y of completedRows) {
+    board.splice(y, 1);
+    board.unshift(new Array(columns).fill(0));
+  }
 }
 
 // キーボードの操作を処理する関数
@@ -56,6 +80,7 @@ function handleKeyPress(event) {
       if (collision()) {
         currentPiece.y--;
         mergePiece();
+        removeRows(getCompletedRows());
         generatePiece();
         if (collision()) {
           // ゲームオーバー
