@@ -1,4 +1,3 @@
-// tetris.js
 let currentPiece;
 let board = createBoard(rows, columns);
 
@@ -63,12 +62,25 @@ function handleKeyPress(event) {
         }
       }
       break;
-      
+
     case 38: // 上矢印キー
       const originalShape = currentPiece.shape;
       currentPiece.shape = rotatePiece([...currentPiece.shape]);
       if (collision()) {
         currentPiece.shape = originalShape;
+      }
+      break;
+      
+    case 32: // スペースキー
+      while (!collision()) {
+        currentPiece.y++;
+      }
+      currentPiece.y--;
+      mergePiece();
+      generatePiece();
+      if (collision()) {
+        // ゲームオーバー
+        board = createBoard(rows, columns);
       }
       break;
   }
