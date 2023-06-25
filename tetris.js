@@ -1,5 +1,13 @@
-let currentPiece;
-let board = createBoard(rows, columns);
+// tetris.js
+function mergePiece() {
+  currentPiece.shape.forEach((row, y) => {
+    row.forEach((value, x) => {
+      if (value !== 0) {
+        board[y + currentPiece.y][x + currentPiece.x] = value;
+      }
+    });
+  });
+}
 
 function collision() {
   for (let y = 0; y < currentPiece.shape.length; y++) {
@@ -15,16 +23,7 @@ function collision() {
   return false;
 }
 
-function mergePiece() {
-  currentPiece.shape.forEach((row, y) => {
-    row.forEach((value, x) => {
-      if (value !== 0) {
-        board[y + currentPiece.y][x + currentPiece.x] = value;
-      }
-    });
-  });
-}
-
+// ピースを反時計回りに90度回転させる関数
 function rotatePiece(piece) {
   for (let y = 0; y < piece.length; y++) {
     for (let x = 0; x < y; x++) {
@@ -35,6 +34,7 @@ function rotatePiece(piece) {
   return piece;
 }
 
+// キーボードの操作を処理する関数
 function handleKeyPress(event) {
   const { keyCode } = event;
 
@@ -76,10 +76,9 @@ function handleKeyPress(event) {
   }
 }
 
-function startGame() {
-  generatePiece();
-  dropPiece();
-}
-
 window.addEventListener("keydown", handleKeyPress);
-startGame();
+
+window.mergePiece = mergePiece;
+window.collision = collision;
+window.rotatePiece = rotatePiece;
+window.handleKeyPress = handleKeyPress;
