@@ -21,23 +21,12 @@
             width: 100%;
         }
         .button {
-            position: relative;
             background-color: #0000FF;
             color: white;
             text-align: center;
             display: inline-block;
             transition-duration: 0.4s;
             cursor: pointer;
-        }
-        .button:before {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            border-color: #0000FF;
-            border-style: solid;
         }
         .button:hover {
             background-color: #888888;
@@ -50,20 +39,12 @@
             left: calc(50% - 450px);
             top: calc(10% + 800px + 500px);
         }
-        .left-button:before {
-            border-width: 100px 200px 100px 0;
-            left: -50%;
-        }
         .right-button {
             height: 200px;
             width: 400px;
             position: absolute;
             left: calc(50% + 50px);
             top: calc(10% + 800px + 500px);
-        }
-        .right-button:before {
-            border-width: 100px 0 100px 200px;
-            right: -50%;
         }
         .up-button {
             height: 300px;
@@ -72,20 +53,12 @@
             left: calc(50% - 150px);
             top: calc(10% + 800px + 200px);
         }
-        .up-button:before {
-            border-width: 200px 150px 0 150px;
-            top: -50%;
-        }
         .down-button {
             height: 300px;
             width: 300px;
             position: absolute;
             left: calc(50% - 150px);
-            top: calc(10% + 800px + 200px + 300px + 200px);
-        }
-        .down-button:before {
-            border-width: 0 150px 200px 150px;
-            bottom: -50%;
+            top: calc(10% + 800px + 200px + 300px + 200px); /* Adjusted */
         }
     </style>
 </head>
@@ -93,10 +66,26 @@
     <div id="game-wrapper">
         <canvas id="game-board" width="400" height="800"></canvas>
         <div id="controls">
-            <button class="button left-button" id="left-button"></button>
-            <button class="button up-button" id="up-button"></button>
-            <button class="button right-button" id="right-button"></button>
-            <button class="button down-button" id="down-button"></button>
+            <button class="button left-button" id="left-button">
+                <svg height="100%" width="100%" viewbox="0 0 1 1" preserveAspectRatio="none">
+                    <polygon points="0.1,0.5 0.6,0.9 0.6,0.1" fill="white" />
+                </svg>
+            </button>
+            <button class="button up-button" id="up-button">
+                <svg height="100%" width="100%" viewbox="0 0 1 1" preserveAspectRatio="none">
+                    <polygon points="0.5,0.1 0.9,0.6 0.1,0.6" fill="white" />
+                </svg>
+            </button>
+            <button class="button right-button" id="right-button">
+                <svg height="100%" width="100%" viewbox="0 0 1 1" preserveAspectRatio="none">
+                    <polygon points="0.9,0.5 0.4,0.9 0.4,0.1" fill="white" />
+                </svg>
+            </button>
+            <button class="button down-button" id="down-button">
+                <svg height="100%" width="100%" viewbox="0 0 1 1" preserveAspectRatio="none">
+                    <polygon points="0.5,0.9 0.1,0.4 0.9,0.4" fill="white" />
+                </svg>
+            </button>
         </div>
     </div>
     <script src="tetris-utils.js"></script>
