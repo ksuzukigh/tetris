@@ -3,9 +3,6 @@
 <head>
     <title>Tetris</title>
     <style>
-        body {
-            touch-action: manipulation; /* Prevent double-tap zoom on whole page */
-        }
         #game-board {
             position: absolute;
             left: 50%;
@@ -61,17 +58,22 @@
             left: calc(50% - 150px);
             top: calc(10% + 800px + 200px + 300px + 200px); /* Adjusted */
         }
+        #game-container {
+            touch-action: manipulation;
+        }
     </style>
 </head>
 <body>
-    <canvas id="game-board" width="400" height="800"></canvas>
-    <div id="controls">
-        <button class="button left-button" id="left-button"></button>
-        <button class="button up-button" id="up-button"></button>
-        <button class="button right-button" id="right-button"></button>
-        <button class="button down-button" id="down-button"></button>
+    <div id="game-container">
+        <canvas id="game-board" width="400" height="800"></canvas>
+        <div id="controls">
+            <button class="button left-button" id="left-button"></button>
+            <button class="button up-button" id="up-button"></button>
+            <button class="button right-button" id="right-button"></button>
+            <button class="button down-button" id="down-button"></button>
+        </div>
+        <script src="tetris-utils.js"></script>
+        <script src="tetris.js"></script>
     </div>
-    <script src="tetris-utils.js"></script>
-    <script src="tetris.js"></script>
 </body>
 </html>
