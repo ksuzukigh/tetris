@@ -151,13 +151,8 @@ function dropPiece() {
 }
 
 function startGame() {
-  console.log(isMobile() ? "Mobile device" : "Desktop device");
   generatePiece();
   dropPiece();
-}
-
-function isMobile() {
-    return window.innerWidth < 800;
 }
 
 setInterval(() => {
@@ -165,3 +160,4 @@ setInterval(() => {
   draw();
 }, 1000 / 2);
 
+startGame();
