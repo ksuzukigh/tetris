@@ -164,5 +164,3 @@ setInterval(() => {
   dropPiece();
   draw();
 }, 1000 / 2);
-
-startGame();
