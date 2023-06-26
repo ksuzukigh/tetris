@@ -3,6 +3,9 @@
 <head>
     <title>Tetris</title>
     <style>
+        body {
+            touch-action: manipulation; /* Prevent double-tap zoom on whole page */
+        }
         #game-board {
             position: absolute;
             left: 50%;
@@ -25,7 +28,6 @@
             display: inline-block;
             transition-duration: 0.4s;
             cursor: pointer;
-            touch-action: manipulation; /* Prevent double-tap zoom */
         }
         .button:hover {
             background-color: #888888;
