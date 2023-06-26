@@ -4,75 +4,17 @@
     <title>Tetris</title>
     <style>
         #game-board {
-            position: relative;
-            width: 300px;
-            height: 600px;
-            border: 1px solid black;
-            margin: 0 auto;
-            top: 10%;
-        }
-
-        #game-board .cell {
-            width: 30px;
-            height: 30px;
-            border: 1px solid black;
-            box-sizing: border-box;
-        }
-
-        #control-buttons {
-            position: relative;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            flex-direction: column;
-            top: 40%;
-        }
-
-        #control-buttons button {
-            border: 1px solid black;
-            background-color: lightgrey;
-            outline: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #up-button {
-            width: 300px;
-            height: 300px;
-            align-self: center;
-            margin-top: 100px;
-        }
-
-        #left-button {
-            width: 400px;
-            height: 200px;
-            align-self: flex-start;
-            margin-top: 100px;
-        }
-
-        #right-button {
-            width: 400px;
-            height: 200px;
-            align-self: flex-end;
-            margin-top: -200px;
-        }
-
-        #down-button {
-            width: 300px;
-            height: 300px;
-            align-self: center;
-            margin-top: -200px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #202028;
+            border: 1px solid #FFF;
         }
     </style>
 </head>
 <body>
-    <div id="game-board"></div>
-    <div id="control-buttons">
-        <button id="up-button"></button>
-        <button id="left-button"></button>
-        <button id="right-button"></button>
-        <button id="down-button"></button>
-    </div>
+    <canvas id="game-board" width="400" height="800"></canvas>
     <script src="tetris-utils.js"></script>
     <script src="tetris.js"></script>
 </body>
