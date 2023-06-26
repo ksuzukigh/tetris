@@ -165,5 +165,5 @@ setInterval(() => {
   draw();
 }, 1000 / 2);
 
-startGame();
+
 
