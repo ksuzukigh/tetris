@@ -3,6 +3,9 @@
 <head>
     <title>Tetris</title>
     <style>
+        #game-wrapper {
+            touch-action: manipulation;
+        }
         #game-board {
             position: absolute;
             left: 50%;
@@ -18,65 +21,83 @@
             width: 100%;
         }
         .button {
-            background-color: #FFFFFF00; /* Transparent */
-            border: none; /* No border */
+            position: relative;
+            background-color: #0000FF;
             color: white;
             text-align: center;
             display: inline-block;
             transition-duration: 0.4s;
             cursor: pointer;
         }
-        .button svg {
-            fill: #555555; /* Color of SVG */
+        .button:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            border-color: #0000FF;
+            border-style: solid;
         }
-        .button:hover svg {
-            fill: #888888; /* Color of SVG on hover */
+        .button:hover {
+            background-color: #888888;
+            color: white;
         }
         .left-button {
+            height: 200px;
+            width: 400px;
             position: absolute;
             left: calc(50% - 450px);
             top: calc(10% + 800px + 500px);
         }
+        .left-button:before {
+            border-width: 100px 200px 100px 0;
+            left: -50%;
+        }
         .right-button {
+            height: 200px;
+            width: 400px;
             position: absolute;
             left: calc(50% + 50px);
             top: calc(10% + 800px + 500px);
         }
+        .right-button:before {
+            border-width: 100px 0 100px 200px;
+            right: -50%;
+        }
         .up-button {
+            height: 300px;
+            width: 300px;
             position: absolute;
             left: calc(50% - 150px);
             top: calc(10% + 800px + 200px);
         }
+        .up-button:before {
+            border-width: 200px 150px 0 150px;
+            top: -50%;
+        }
         .down-button {
+            height: 300px;
+            width: 300px;
             position: absolute;
             left: calc(50% - 150px);
-            top: calc(10% + 800px + 200px + 300px + 200px); /* Adjusted */
+            top: calc(10% + 800px + 200px + 300px + 200px);
+        }
+        .down-button:before {
+            border-width: 0 150px 200px 150px;
+            bottom: -50%;
         }
     </style>
 </head>
-<body>
-    <canvas id="game-board" width="400" height="800"></canvas>
-    <div id="controls">
-        <button class="button left-button" id="left-button">
-            <svg height="200" width="400">
-                <polygon points="0,100 400,0 400,200" />
-            </svg>
-        </button>
-        <button class="button up-button" id="up-button">
-            <svg height="300" width="300">
-                <polygon points="150,0 0,300 300,300" />
-            </svg>
-        </button>
-        <button class="button right-button" id="right-button">
-            <svg height="200" width="400">
-                <polygon points="0,0 0,200 400,100" />
-            </svg>
-        </button>
-        <button class="button down-button" id="down-button">
-            <svg height="300" width="300">
-                <polygon points="0,0 300,0 150,300" />
-            </svg>
-        </button>
+<body style="touch-action: manipulation;">
+    <div id="game-wrapper">
+        <canvas id="game-board" width="400" height="800"></canvas>
+        <div id="controls">
+            <button class="button left-button" id="left-button"></button>
+            <button class="button up-button" id="up-button"></button>
+            <button class="button right-button" id="right-button"></button>
+            <button class="button down-button" id="down-button"></button>
+        </div>
     </div>
     <script src="tetris-utils.js"></script>
     <script src="tetris.js"></script>
