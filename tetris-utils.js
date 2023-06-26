@@ -165,7 +165,7 @@ function startGame() {
 }
 
 function isMobile() {
-    return window.innerWidth < 800;
+    return window.innerWidth < 1090;
 }
 
 setInterval(() => {
