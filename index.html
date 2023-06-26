@@ -5,69 +5,63 @@
     <style>
         #game-board {
             position: absolute;
+            top: 50%;
             left: 50%;
-            top: 10%;
-            transform: translate(-50%, -10%);
-            background: #202028;
-            border: 1px solid #FFF;
+            transform: translate(-50%, -50%);
+            display: grid;
+            grid-gap: 2px;
+            background-color: white;
         }
-        #controls {
-            display: flex;
-            justify-content: center;
+
+        .cell {
+            width: 20px;
+            height: 20px;
+            background-color: black;
+        }
+
+        #up-button {
             position: absolute;
-            width: 100%;
-        }
-        .button {
-            background-color: #FFFFFF00; /* Transparent */
-            border: 1px solid #555555; /* Outlined */
-            color: white;
-            text-align: center;
-            display: inline-block;
-            transition-duration: 0.4s;
-            cursor: pointer;
-        }
-        .button:hover {
-            background-color: #888888;
-            color: white;
-        }
-        .left-button {
+            top: calc(50% + 150px);
+            left: calc(50% - 150px);
             height: 300px;
-            width: 400px;
-            position: absolute;
-            left: calc(50% - 450px); /* Adjusted */
-            top: calc(10% + 800px + 500px); /* Adjusted */
+            width: 300px;
+            border: 5px solid white;
         }
-        .right-button {
+
+        #left-button {
+            position: absolute;
+            top: calc(50% + 250px);
+            left: calc(50% - 450px);
+            height: 200px;
+            width: 400px;
+            border: 5px solid white;
+        }
+
+        #right-button {
+            position: absolute;
+            top: calc(50% + 250px);
+            left: calc(50% + 50px);
+            height: 200px;
+            width: 400px;
+            border: 5px solid white;
+        }
+
+        #down-button {
+            position: absolute;
+            top: calc(50% + 450px);
+            left: calc(50% - 150px);
             height: 300px;
-            width: 400px;
-            position: absolute;
-            left: calc(50% + 50px); /* Adjusted */
-            top: calc(10% + 800px + 500px); /* Adjusted */
-        }
-        .up-button {
-            height: 400px;
             width: 300px;
-            position: absolute;
-            left: calc(50% - 150px); /* Adjusted */
-            top: calc(10% + 800px + 100px); /* Adjusted */
-        }
-        .down-button {
-            height: 400px;
-            width: 300px;
-            position: absolute;
-            left: calc(50% - 150px); /* Adjusted */
-            top: calc(10% + 800px + 500px + 300px + 100px); /* Adjusted */
+            border: 5px solid white;
         }
     </style>
 </head>
 <body>
-    <canvas id="game-board" width="400" height="800"></canvas>
-    <div id="controls">
-        <button class="button left-button" id="left-button"></button>
-        <button class="button up-button" id="up-button"></button>
-        <button class="button right-button" id="right-button"></button>
-        <button class="button down-button" id="down-button"></button>
-    </div>
-    <!-- Add game logic and button event handlers here -->
+    <div id="game-board"></div>
+    <button id="up-button"></button>
+    <button id="left-button"></button>
+    <button id="right-button"></button>
+    <button id="down-button"></button>
+    <script src="tetris.js"></script>
 </body>
 </html>
