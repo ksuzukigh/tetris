@@ -57,6 +57,8 @@ function createBoard(rows, columns) {
 }
 
 function clearLines() {
+  let linesCleared = 0;
+
   outer: for (let y = board.length - 1; y >= 0; y--) {
     for (let x = 0; x < board[y].length; x++) {
       if (board[y][x] === 0) {
@@ -66,7 +68,11 @@ function clearLines() {
 
     const row = board.splice(y, 1)[0].fill(0);
     board.unshift(row);
+    linesCleared++;
+    y++;
   }
+
+  return linesCleared;
 }
 
 function draw() {
@@ -114,7 +120,9 @@ function mergePiece() {
       }
     });
   });
-  clearLines();
+
+  const linesCleared = clearLines();
+  // ここで linesCleared を使用して得点を計算する
 }
 
 function collision() {
@@ -164,3 +172,4 @@ setInterval(() => {
   dropPiece();
   draw();
 }, 1000 / 2);
+
