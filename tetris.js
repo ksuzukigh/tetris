@@ -10,43 +10,65 @@ function handleKeyPress(event) {
 
   switch (keyCode) {
     case 37: // 左矢印キー
-      currentPiece.x--;
-      if (collision()) {
-        currentPiece.x++;
-      }
+      moveLeft();
       break;
 
     case 39: // 右矢印キー
-      currentPiece.x++;
-      if (collision()) {
-        currentPiece.x--;
-      }
+      moveRight();
       break;
 
     case 40: // 下矢印キー
-      currentPiece.y++;
-      if (collision()) {
-        currentPiece.y--;
-        mergePiece();
-        generatePiece();
-        if (collision()) {
-          // ゲームオーバー
-          board = createBoard(rows, columns);
-        }
-      }
+      moveDown();
       break;
-      
+
     case 38: // 上矢印キー
-      const originalShape = currentPiece.shape;
-      currentPiece.shape = rotatePiece([...currentPiece.shape]);
-      if (collision()) {
-        currentPiece.shape = originalShape;
-      }
+      rotate();
       break;
   }
 }
 
+function moveLeft() {
+  currentPiece.x--;
+  if (collision()) {
+    currentPiece.x++;
+  }
+}
+
+function moveRight() {
+  currentPiece.x++;
+  if (collision()) {
+    currentPiece.x--;
+  }
+}
+
+function moveDown() {
+  currentPiece.y++;
+  if (collision()) {
+    currentPiece.y--;
+    mergePiece();
+    generatePiece();
+    if (collision()) {
+      // ゲームオーバー
+      board = createBoard(rows, columns);
+    }
+  }
+}
+
+function rotate() {
+  const originalShape = currentPiece.shape;
+  currentPiece.shape = rotatePiece([...currentPiece.shape]);
+  if (collision()) {
+    currentPiece.shape = originalShape;
+  }
+}
+
 window.addEventListener("keydown", handleKeyPress);
+
+// Add click event listener for buttons
+document.getElementById("left-button").addEventListener("click", moveLeft);
+document.getElementById("right-button").addEventListener("click", moveRight);
+document.getElementById("down-button").addEventListener("click", moveDown);
+document.getElementById("up-button").addEventListener("click", rotate);
 
 function startGame() {
   generatePiece();
